@@ -36,9 +36,18 @@ class AuthenticationMethod(BaseEnum):
     Lidarr authentication method.
     """
 
-    none = "none"
     basic = "basic"
     form = "forms"
+    external = "external"
+
+
+class AuthenticationRequired(BaseEnum):
+    """
+    Authentication requirement settings.
+    """
+
+    enabled = "enabled"
+    local_disabled = "disabledForLocalAddresses"
 
 
 class CertificateValidation(BaseEnum):
@@ -188,18 +197,35 @@ class SecurityGeneralSettings(GeneralSettings):
     Lidarr instance security (authentication) settings.
     """
 
-    authentication: AuthenticationMethod = AuthenticationMethod.none
+    authentication: AuthenticationMethod = AuthenticationMethod.form
     """
     Authentication method for logging into Lidarr.
-    By default, do not require authentication.
 
     Values:
 
-    * `none` - No authentication
     * `basic` - Authentication using HTTP basic auth (browser popup)
-    * `form` - Authentication using a login page
+    * `form`/`forms` - Authentication using a login page
+    * `external` - External authentication using a reverse proxy (set to disable authentication)
+
+    !!! warning
+
+        When the authentication method is set to `external`,
+        **authentication is disabled within Sonarr itself.**
+
+        **Make sure access to Sonarr is secured**, either by using a reverse proxy with
+        forward authentication configured, or not exposing Sonarr to the public Internet.
 
     Requires a restart of Lidarr to take effect.
+    """
+
+    authentication_required: AuthenticationRequired = AuthenticationRequired.enabled
+    """
+    Authentication requirement settings for accessing Sonarr.
+
+    Values:
+
+    * `enabled` - Enabled
+    * `local-disabled` - Disabled for Local Addresses
     """
 
     username: Optional[str] = None
@@ -233,6 +259,7 @@ class SecurityGeneralSettings(GeneralSettings):
 
     _remote_map: ClassVar[List[RemoteMapEntry]] = [
         ("authentication", "authenticationMethod", {}),
+        ("authentication_required", "authenticationRequired", {}),
         (
             "username",
             "username",
