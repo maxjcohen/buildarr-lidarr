@@ -114,7 +114,7 @@ class RemotePathMapping(LidarrConfigBase):
     def _create_remote(self, tree: str, secrets: LidarrSecrets) -> None:
         api_post(
             secrets,
-            "/api/v3/remotepathmapping",
+            "/api/v1/remotepathmapping",
             self.get_create_remote_attrs(tree, self._remote_map),
         )
 
@@ -135,7 +135,7 @@ class RemotePathMapping(LidarrConfigBase):
         if updated:
             api_put(
                 secrets,
-                f"/api/v3/remotepathmapping/{remotepathmapping_id}",
+                f"/api/v1/remotepathmapping/{remotepathmapping_id}",
                 {"id": remotepathmapping_id, **remote_attrs},
             )
             return True
@@ -150,7 +150,7 @@ class RemotePathMapping(LidarrConfigBase):
     ) -> bool:
         self.log_delete_remote_attrs(tree=tree, remote_map=self._remote_map, delete=delete)
         if delete:
-            api_delete(secrets, f"/api/v3/remotepathmapping/{remotepathmapping_id}")
+            api_delete(secrets, f"/api/v1/remotepathmapping/{remotepathmapping_id}")
             return True
         return False
 
@@ -208,7 +208,7 @@ class LidarrRemotePathMappingsSettingsConfig(LidarrConfigBase):
             definitions=sorted(
                 (
                     RemotePathMapping._from_remote(rpm)
-                    for rpm in api_get(secrets, "/api/v3/remotepathmapping")
+                    for rpm in api_get(secrets, "/api/v1/remotepathmapping")
                 ),
                 key=lambda v: (v.host, v.remote_path, v.local_path),
             ),
@@ -230,7 +230,7 @@ class LidarrRemotePathMappingsSettingsConfig(LidarrConfigBase):
                 OSAgnosticPath(rpm["remotePath"]),
                 OSAgnosticPath(rpm["localPath"]),
             ): rpm["id"]
-            for rpm in api_get(secrets, "/api/v3/remotepathmapping")
+            for rpm in api_get(secrets, "/api/v1/remotepathmapping")
         }
         remote_rpms: Dict[Tuple[str, OSAgnosticPath, OSAgnosticPath], RemotePathMapping] = {
             (rpm.host, rpm.remote_path, rpm.local_path): rpm for rpm in remote.definitions
@@ -270,7 +270,7 @@ class LidarrRemotePathMappingsSettingsConfig(LidarrConfigBase):
                 OSAgnosticPath(rpm["remotePath"]),
                 OSAgnosticPath(rpm["localPath"]),
             ): rpm["id"]
-            for rpm in api_get(secrets, "/api/v3/remotepathmapping")
+            for rpm in api_get(secrets, "/api/v1/remotepathmapping")
         }
         local_rpms: Dict[Tuple[str, OSAgnosticPath, OSAgnosticPath], RemotePathMapping] = {
             (rpm.host, rpm.remote_path, rpm.local_path): rpm for rpm in self.definitions

@@ -216,7 +216,7 @@ class Indexer(LidarrConfigBase):
     ) -> None:
         api_post(
             secrets,
-            "/api/v3/indexer",
+            "/api/v1/indexer",
             {
                 "name": indexer_name,
                 "implementation": self._implementation,
@@ -248,7 +248,7 @@ class Indexer(LidarrConfigBase):
         if updated:
             api_put(
                 secrets,
-                f"/api/v3/indexer/{indexer_id}",
+                f"/api/v1/indexer/{indexer_id}",
                 {
                     "id": indexer_id,
                     "name": indexer_name,
@@ -262,7 +262,7 @@ class Indexer(LidarrConfigBase):
         return False
 
     def _delete_remote(self, secrets: LidarrSecrets, indexer_id: int) -> None:
-        api_delete(secrets, f"/api/v3/indexer/{indexer_id}")
+        api_delete(secrets, f"/api/v1/indexer/{indexer_id}")
 
 
 class UsenetIndexer(Indexer):
@@ -1108,15 +1108,15 @@ class LidarrIndexersSettingsConfig(LidarrConfigBase):
 
     @classmethod
     def from_remote(cls, secrets: LidarrSecrets) -> Self:
-        indexer_config = api_get(secrets, "/api/v3/config/indexer")
-        indexers = api_get(secrets, "/api/v3/indexer")
+        indexer_config = api_get(secrets, "/api/v1/config/indexer")
+        indexers = api_get(secrets, "/api/v1/indexer")
         download_client_ids: Dict[str, int] = (
-            {dc["name"]: dc["id"] for dc in api_get(secrets, "/api/v3/downloadclient")}
+            {dc["name"]: dc["id"] for dc in api_get(secrets, "/api/v1/downloadclient")}
             if any(indexer_metadata["downloadClientId"] for indexer_metadata in indexers)
             else {}
         )
         tag_ids: Dict[str, int] = (
-            {tag["label"]: tag["id"] for tag in api_get(secrets, "/api/v3/tag")}
+            {tag["label"]: tag["id"] for tag in api_get(secrets, "/api/v1/tag")}
             if any(indexer["tags"] for indexer in indexers)
             else {}
         )
@@ -1143,16 +1143,16 @@ class LidarrIndexersSettingsConfig(LidarrConfigBase):
     ) -> bool:
         changed = False
         indexer_ids: Dict[str, int] = {
-            indexer["name"]: indexer["id"] for indexer in api_get(secrets, "/api/v3/indexer")
+            indexer["name"]: indexer["id"] for indexer in api_get(secrets, "/api/v1/indexer")
         }
         download_client_ids: Dict[str, int] = (
-            {dc["name"]: dc["id"] for dc in api_get(secrets, "/api/v3/downloadclient")}
+            {dc["name"]: dc["id"] for dc in api_get(secrets, "/api/v1/downloadclient")}
             if any(indexer.download_client for indexer in self.definitions.values())
             or any(indexer.download_client for indexer in remote.definitions.values())
             else {}
         )
         tag_ids: Dict[str, int] = (
-            {tag["label"]: tag["id"] for tag in api_get(secrets, "/api/v3/tag")}
+            {tag["label"]: tag["id"] for tag in api_get(secrets, "/api/v1/tag")}
             if any(indexer.tags for indexer in self.definitions.values())
             or any(indexer.tags for indexer in remote.definitions.values())
             else {}
@@ -1166,7 +1166,7 @@ class LidarrIndexersSettingsConfig(LidarrConfigBase):
         if config_changed:
             api_put(
                 secrets,
-                f"/api/v3/config/indexer/{api_get(secrets, '/api/v3/config/indexer')['id']}",
+                f"/api/v1/config/indexer/{api_get(secrets, '/api/v3/config/indexer')['id']}",
                 config_remote_attrs,
             )
             changed = True
@@ -1196,7 +1196,7 @@ class LidarrIndexersSettingsConfig(LidarrConfigBase):
     def delete_remote(self, tree: str, secrets: LidarrSecrets, remote: Self) -> bool:
         changed = False
         indexer_ids: Dict[str, int] = {
-            indexer["name"]: indexer["id"] for indexer in api_get(secrets, "/api/v3/indexer")
+            indexer["name"]: indexer["id"] for indexer in api_get(secrets, "/api/v1/indexer")
         }
         for indexer_name, indexer in remote.definitions.items():
             if indexer_name not in self.definitions:

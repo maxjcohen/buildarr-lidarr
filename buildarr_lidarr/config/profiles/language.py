@@ -299,14 +299,14 @@ class LanguageProfile(LidarrConfigBase):
         if changed:
             api_put(
                 secrets,
-                f"/api/v3/languageprofile/{profile_id}",
+                f"/api/v1/languageprofile/{profile_id}",
                 {"id": profile_id, "name": profile_name, **remote_attrs},
             )
             return True
         return False
 
     def _delete_remote(self, secrets: LidarrSecrets, profile_id: int) -> None:
-        api_delete(secrets, f"/api/v3/languageprofile/{profile_id}")
+        api_delete(secrets, f"/api/v1/languageprofile/{profile_id}")
 
 
 class LidarrLanguageProfilesSettingsConfig(LidarrConfigBase):
@@ -332,12 +332,12 @@ class LidarrLanguageProfilesSettingsConfig(LidarrConfigBase):
     def from_remote(cls, secrets: LidarrSecrets) -> Self:
         language_ids = {
             Language(language["language"]["name"]): language["language"]["id"]
-            for language in api_get(secrets, "/api/v3/languageprofile/schema")["languages"]
+            for language in api_get(secrets, "/api/v1/languageprofile/schema")["languages"]
         }
         return cls(
             definitions={
                 profile["name"]: LanguageProfile._from_remote(language_ids, profile)
-                for profile in api_get(secrets, "/api/v3/languageprofile")
+                for profile in api_get(secrets, "/api/v1/languageprofile")
             },
         )
 
@@ -351,19 +351,19 @@ class LidarrLanguageProfilesSettingsConfig(LidarrConfigBase):
         changed = False
         profile_ids: Dict[str, int] = {
             profile_json["name"]: profile_json["id"]
-            for profile_json in api_get(secrets, "/api/v3/languageprofile")
+            for profile_json in api_get(secrets, "/api/v1/languageprofile")
         }
         language_ids = {
             Language(language["language"]["name"]): language["language"]["id"]
-            for language in api_get(secrets, "/api/v3/languageprofile/schema")["languages"]
+            for language in api_get(secrets, "/api/v1/languageprofile/schema")["languages"]
         }
         # # Only works on Lidarr V4
         # try:
         #     language_ids: Dict[Language, int] = {
         #         Language(language["name"]): language["id"]
-        #         for language in api_get(secrets, "/api/v3/language")
+        #         for language in api_get(secrets, "/api/v1/language")
         #     }
-        # # Compatible with Lidarr V3, deprecated on Lidarr V4
+        # # Compatible with Lidarr v1, deprecated on Lidarr V4
         # except LidarrAPIError as err:
         #     if err.response.status_code == 404:
         #         ...
@@ -394,7 +394,7 @@ class LidarrLanguageProfilesSettingsConfig(LidarrConfigBase):
         changed = False
         profile_ids: Dict[str, int] = {
             profile_json["name"]: profile_json["id"]
-            for profile_json in api_get(secrets, "/api/v3/languageprofile")
+            for profile_json in api_get(secrets, "/api/v1/languageprofile")
         }
         for profile_name, profile in remote.definitions.items():
             if profile_name not in self.definitions:

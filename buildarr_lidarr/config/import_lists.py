@@ -343,7 +343,7 @@ class ImportList(LidarrConfigBase):
         """
         api_post(
             secrets,
-            "/api/v3/importlist",
+            "/api/v1/importlist",
             {
                 "name": importlist_name,
                 "implementation": self._implementation,
@@ -402,7 +402,7 @@ class ImportList(LidarrConfigBase):
         if updated:
             api_put(
                 secrets,
-                f"/api/v3/importlist/{importlist_id}",
+                f"/api/v1/importlist/{importlist_id}",
                 {
                     "id": importlist_id,
                     "name": importlist_name,
@@ -424,7 +424,7 @@ class ImportList(LidarrConfigBase):
             secrets (LidarrSecrets): Secrets metadata for the remote instance.
             importlist_id (int): ID associated with this import list on the remote instance.
         """
-        api_delete(secrets, f"/api/v3/importlist/{importlist_id}")
+        api_delete(secrets, f"/api/v1/importlist/{importlist_id}")
 
 
 class ProgramImportList(ImportList):
@@ -455,7 +455,7 @@ class TraktImportList(ImportList):
         shell command to retrieve the generated configuration.
 
         ```bash
-        $ curl -X "GET" "<lidarr-url>/api/v3/notification" -H "X-Api-Key: <api-key>"
+        $ curl -X "GET" "<lidarr-url>/api/v1/notification" -H "X-Api-Key: <api-key>"
         ```
 
     The following parameters are common to all Trakt import list types.
@@ -565,7 +565,7 @@ class LidarrImportList(ProgramImportList):
     Import items from another Lidarr instance.
 
     The linked Lidarr instance must be the same major version as this defined Lidarr instance.
-    For example, a Lidarr V3 instance cannot connect with a Lidarr V4 instance, and vice versa.
+    For example, a Lidarr v1 instance cannot connect with a Lidarr V4 instance, and vice versa.
 
     ```yaml
     ...
@@ -787,7 +787,7 @@ class LidarrImportList(ProgramImportList):
         Returns:
             List of resource API objects
         """
-        return api_get(cls._get_secrets(instance_name), f"/api/v3/{resource_type}")
+        return api_get(cls._get_secrets(instance_name), f"/api/v1/{resource_type}")
 
     @field_validator("api_key")
     @classmethod
@@ -1191,19 +1191,19 @@ class LidarrImportListsSettingsConfig(LidarrConfigBase):
 
     @classmethod
     def from_remote(cls, secrets: LidarrSecrets) -> Self:
-        importlists = api_get(secrets, "/api/v3/importlist")
+        importlists = api_get(secrets, "/api/v1/importlist")
         quality_profile_ids: Dict[str, int] = (
-            {pro["name"]: pro["id"] for pro in api_get(secrets, "/api/v3/qualityprofile")}
+            {pro["name"]: pro["id"] for pro in api_get(secrets, "/api/v1/qualityprofile")}
             if any(importlist["qualityProfileId"] for importlist in importlists)
             else {}
         )
         language_profile_ids: Dict[str, int] = (
-            {pro["name"]: pro["id"] for pro in api_get(secrets, "/api/v3/languageprofile")}
+            {pro["name"]: pro["id"] for pro in api_get(secrets, "/api/v1/languageprofile")}
             if any(importlist["languageProfileId"] for importlist in importlists)
             else {}
         )
         tag_ids: Dict[str, int] = (
-            {tag["label"]: tag["id"] for tag in api_get(secrets, "/api/v3/tag")}
+            {tag["label"]: tag["id"] for tag in api_get(secrets, "/api/v1/tag")}
             if any(importlist["tags"] for importlist in importlists)
             else {}
         )
@@ -1233,16 +1233,16 @@ class LidarrImportListsSettingsConfig(LidarrConfigBase):
         # Get required resource ID references from the remote Lidarr instance.
         importlist_ids: Dict[str, int] = {
             importlist_json["name"]: importlist_json["id"]
-            for importlist_json in api_get(secrets, "/api/v3/importlist")
+            for importlist_json in api_get(secrets, "/api/v1/importlist")
         }
         quality_profile_ids: Dict[str, int] = {
-            pro["name"]: pro["id"] for pro in api_get(secrets, "/api/v3/qualityprofile")
+            pro["name"]: pro["id"] for pro in api_get(secrets, "/api/v1/qualityprofile")
         }
         language_profile_ids: Dict[str, int] = {
-            pro["name"]: pro["id"] for pro in api_get(secrets, "/api/v3/languageprofile")
+            pro["name"]: pro["id"] for pro in api_get(secrets, "/api/v1/languageprofile")
         }
         tag_ids: Dict[str, int] = {
-            tag["label"]: tag["id"] for tag in api_get(secrets, "/api/v3/tag")
+            tag["label"]: tag["id"] for tag in api_get(secrets, "/api/v1/tag")
         }
         # Evaluate locally defined import lists against the currently active ones
         # on the remote instance.
@@ -1284,7 +1284,7 @@ class LidarrImportListsSettingsConfig(LidarrConfigBase):
         changed = False
         importlist_ids: Dict[str, int] = {
             importlist_json["name"]: importlist_json["id"]
-            for importlist_json in api_get(secrets, "/api/v3/importlist")
+            for importlist_json in api_get(secrets, "/api/v1/importlist")
         }
         for importlist_name, importlist in remote.definitions.items():
             if importlist_name not in self.definitions:

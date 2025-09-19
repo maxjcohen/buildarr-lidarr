@@ -499,7 +499,7 @@ class LidarrGeneralSettingsConfig(LidarrConfigBase):
 
     @classmethod
     def from_remote(cls, secrets: LidarrSecrets) -> Self:
-        settings = api_get(secrets, "/api/v3/config/host")
+        settings = api_get(secrets, "/api/v1/config/host")
         return cls(
             host=HostGeneralSettings._from_remote(settings),
             security=SecurityGeneralSettings._from_remote(settings),
@@ -570,10 +570,10 @@ class LidarrGeneralSettingsConfig(LidarrConfigBase):
                 backup_updated,
             ],
         ):
-            remote_config = api_get(secrets, "/api/v3/config/host")
+            remote_config = api_get(secrets, "/api/v1/config/host")
             api_put(
                 secrets,
-                f"/api/v3/config/host/{remote_config['id']}",
+                f"/api/v1/config/host/{remote_config['id']}",
                 {
                     # There are some undocumented values that are not
                     # set by Buildarr. Pass those through unmodified.

@@ -143,10 +143,10 @@ class LidarrDownloadClientsSettingsConfig(LidarrConfigBase):
 
     @classmethod
     def from_remote(cls, secrets: LidarrSecrets) -> Self:
-        downloadclient_config = api_get(secrets, "/api/v3/config/downloadclient")
-        downloadclients = api_get(secrets, "/api/v3/downloadclient")
+        downloadclient_config = api_get(secrets, "/api/v1/config/downloadclient")
+        downloadclients = api_get(secrets, "/api/v1/downloadclient")
         tag_ids: Dict[str, int] = (
-            {tag["label"]: tag["id"] for tag in api_get(secrets, "/api/v3/tag")}
+            {tag["label"]: tag["id"] for tag in api_get(secrets, "/api/v1/tag")}
             if any(downloadclient["tags"] for downloadclient in downloadclients)
             else {}
         )
@@ -183,10 +183,10 @@ class LidarrDownloadClientsSettingsConfig(LidarrConfigBase):
             check_unmanaged=check_unmanaged,
         )
         if config_updated:
-            remote_config = api_get(secrets, "/api/v3/config/downloadclient")
+            remote_config = api_get(secrets, "/api/v1/config/downloadclient")
             api_put(
                 secrets,
-                f"/api/v3/config/downloadclient/{remote_config['id']}",
+                f"/api/v1/config/downloadclient/{remote_config['id']}",
                 {
                     "id": remote_config["id"],
                     "downloadClientWorkingFolders": remote_config["downloadClientWorkingFolders"],
@@ -221,10 +221,10 @@ class LidarrDownloadClientsSettingsConfig(LidarrConfigBase):
         changed = False
         downloadclient_ids: Dict[str, int] = {
             downloadclient_json["name"]: downloadclient_json["id"]
-            for downloadclient_json in api_get(secrets, "/api/v3/downloadclient")
+            for downloadclient_json in api_get(secrets, "/api/v1/downloadclient")
         }
         tag_ids: Dict[str, int] = (
-            {tag["label"]: tag["id"] for tag in api_get(secrets, "/api/v3/tag")}
+            {tag["label"]: tag["id"] for tag in api_get(secrets, "/api/v1/tag")}
             if any(downloadclient.tags for downloadclient in local.values())
             or any(downloadclient.tags for downloadclient in remote.values())
             else {}
@@ -274,7 +274,7 @@ class LidarrDownloadClientsSettingsConfig(LidarrConfigBase):
         changed = False
         downloadclient_ids: Dict[str, int] = {
             downloadclient_json["name"]: downloadclient_json["id"]
-            for downloadclient_json in api_get(secrets, "/api/v3/downloadclient")
+            for downloadclient_json in api_get(secrets, "/api/v1/downloadclient")
         }
         for downloadclient_name, downloadclient in remote.items():
             if downloadclient_name not in local:

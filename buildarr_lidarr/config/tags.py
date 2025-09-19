@@ -59,7 +59,7 @@ class LidarrTagsSettingsConfig(LidarrConfigBase):
     @classmethod
     def from_remote(cls, secrets: LidarrSecrets) -> Self:
         return cls(
-            definitions=set(tag["label"] for tag in api_get(secrets, "/api/v3/tag")),
+            definitions=set(tag["label"] for tag in api_get(secrets, "/api/v1/tag")),
         )
 
     def update_remote(
@@ -72,7 +72,7 @@ class LidarrTagsSettingsConfig(LidarrConfigBase):
         # This only does creations and updates, as Lidarr automatically cleans up unused tags.
         changed = False
         current_tags: Dict[str, int] = {
-            tag["label"]: tag["id"] for tag in api_get(secrets, "/api/v3/tag")
+            tag["label"]: tag["id"] for tag in api_get(secrets, "/api/v1/tag")
         }
         if self.definitions:
             for i, tag in enumerate(sorted(self.definitions)):
@@ -80,6 +80,6 @@ class LidarrTagsSettingsConfig(LidarrConfigBase):
                     logger.debug("%s.definitions[%i]: %s (exists)", tree, i, repr(tag))
                 else:
                     logger.info("%s.definitions[%i]: %s -> (created)", tree, i, repr(tag))
-                    api_post(secrets, "/api/v3/tag", {"label": tag})
+                    api_post(secrets, "/api/v1/tag", {"label": tag})
                     changed = True
         return changed

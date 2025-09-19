@@ -122,7 +122,7 @@ class LidarrSecrets(SecretsPlugin["LidarrConfig"]):
         try:
             system_status = cast(
                 Dict[str, Any],
-                api_get(host_url, "/api/v3/system/status", api_key=api_key),
+                api_get(host_url, "/api/v1/system/status", api_key=api_key),
             )
         except LidarrAPIError as err:
             if err.status_code == HTTPStatus.UNAUTHORIZED:

@@ -502,16 +502,16 @@ class LidarrMediaManagementSettingsConfig(LidarrConfigBase):
             # Episode Naming
             **cls.get_local_attrs(
                 cls._naming_remote_map,
-                api_get(secrets, "/api/v3/config/naming"),
+                api_get(secrets, "/api/v1/config/naming"),
             ),
             # All other sections except Root Folders
             **cls.get_local_attrs(
                 cls._mediamanagement_remote_map,
-                api_get(secrets, "/api/v3/config/mediamanagement"),
+                api_get(secrets, "/api/v1/config/mediamanagement"),
             ),
             # Root Folders
             root_folders=set(
-                cast(NonEmptyStr, rf["path"]) for rf in api_get(secrets, "/api/v3/rootfolder")
+                cast(NonEmptyStr, rf["path"]) for rf in api_get(secrets, "/api/v1/rootfolder")
             ),
         )
 
@@ -563,10 +563,10 @@ class LidarrMediaManagementSettingsConfig(LidarrConfigBase):
             set_unchanged=True,
         )
         if updated:
-            config_id = api_get(secrets, "/api/v3/config/naming")["id"]
+            config_id = api_get(secrets, "/api/v1/config/naming")["id"]
             api_put(
                 secrets,
-                f"/api/v3/config/naming/{config_id}",
+                f"/api/v1/config/naming/{config_id}",
                 {"id": config_id, **remote_attrs},
             )
             return True
@@ -587,10 +587,10 @@ class LidarrMediaManagementSettingsConfig(LidarrConfigBase):
             set_unchanged=True,
         )
         if updated:
-            config_id = api_get(secrets, "/api/v3/config/mediamanagement")["id"]
+            config_id = api_get(secrets, "/api/v1/config/mediamanagement")["id"]
             api_put(
                 secrets,
-                f"/api/v3/config/mediamanagement/{config_id}",
+                f"/api/v1/config/mediamanagement/{config_id}",
                 {"id": config_id, **remote_attrs},
             )
             return True
@@ -605,14 +605,14 @@ class LidarrMediaManagementSettingsConfig(LidarrConfigBase):
     ) -> bool:
         changed = False
         current_root_folders: Dict[str, int] = {
-            rf["path"]: rf["id"] for rf in api_get(secrets, "/api/v3/rootfolder")
+            rf["path"]: rf["id"] for rf in api_get(secrets, "/api/v1/rootfolder")
         }
         for i, root_folder in enumerate(self.root_folders):
             if root_folder in current_root_folders:
                 logger.debug("%s[%i]: %s (exists)", tree, i, repr(str(root_folder)))
             else:
                 logger.info("%s[%i]: %s -> (created)", tree, i, repr(str(root_folder)))
-                api_post(secrets, "/api/v3/rootfolder", {"path": str(root_folder)})
+                api_post(secrets, "/api/v1/rootfolder", {"path": str(root_folder)})
                 changed = True
         return changed
 
@@ -626,7 +626,7 @@ class LidarrMediaManagementSettingsConfig(LidarrConfigBase):
     def _delete_remote_rootfolder(self, tree: str, secrets: LidarrSecrets, remote: Self) -> bool:
         changed = False
         current_root_folders: Dict[str, int] = {
-            rf["path"]: rf["id"] for rf in api_get(secrets, "/api/v3/rootfolder")
+            rf["path"]: rf["id"] for rf in api_get(secrets, "/api/v1/rootfolder")
         }
         expected_root_folders = set(self.root_folders)
         i = -1
@@ -634,7 +634,7 @@ class LidarrMediaManagementSettingsConfig(LidarrConfigBase):
             if root_folder not in expected_root_folders:
                 if self.delete_unmanaged_root_folders:
                     logger.info("%s[%i]: %s -> (deleted)", tree, i, repr(str(root_folder)))
-                    api_delete(secrets, f"/api/v3/rootfolder/{root_folder_id}")
+                    api_delete(secrets, f"/api/v1/rootfolder/{root_folder_id}")
                     changed = True
                 else:
                     logger.info("%s[%i]: %s -> (unmanaged)", tree, i, repr(str(root_folder)))

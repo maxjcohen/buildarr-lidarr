@@ -184,7 +184,7 @@ class LidarrUISettingsConfig(LidarrConfigBase):
         return cls(
             **cls.get_local_attrs(
                 remote_map=cls._remote_map,
-                remote_attrs=api_get(secrets, "/api/v3/config/ui"),
+                remote_attrs=api_get(secrets, "/api/v1/config/ui"),
             ),
         )
 
@@ -203,10 +203,10 @@ class LidarrUISettingsConfig(LidarrConfigBase):
             set_unchanged=True,
         )
         if updated:
-            config_id = api_get(secrets, "/api/v3/config/ui")["id"]
+            config_id = api_get(secrets, "/api/v1/config/ui")["id"]
             api_put(
                 secrets,
-                f"/api/v3/config/ui/{config_id}",
+                f"/api/v1/config/ui/{config_id}",
                 {"id": config_id, **remote_attrs},
             )
             return True

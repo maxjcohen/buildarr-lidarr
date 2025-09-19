@@ -73,7 +73,7 @@ class Metadata(LidarrConfigBase):
             ]
             api_put(
                 secrets,
-                f"/api/v3/metadata/{api_metadata['id']}",
+                f"/api/v1/metadata/{api_metadata['id']}",
                 {
                     **api_metadata,
                     **remote_attrs,
@@ -259,7 +259,7 @@ class LidarrMetadataSettingsConfig(LidarrConfigBase):
         kodi_emby_metadata: Optional[Dict[str, Any]] = None
         roksbox_metadata: Optional[Dict[str, Any]] = None
         wdtv_metadata: Optional[Dict[str, Any]] = None
-        for metadata in api_get(secrets, "/api/v3/metadata"):
+        for metadata in api_get(secrets, "/api/v1/metadata"):
             if metadata["implementation"] == KodiEmbyMetadata._implementation:
                 kodi_emby_metadata = metadata
             elif metadata["implementation"] == RoksboxMetadata._implementation:
@@ -294,7 +294,7 @@ class LidarrMetadataSettingsConfig(LidarrConfigBase):
         kodi_emby_metadata: Optional[Dict[str, Any]] = None
         roksbox_metadata: Optional[Dict[str, Any]] = None
         wdtv_metadata: Optional[Dict[str, Any]] = None
-        for metadata in api_get(secrets, "/api/v3/metadata"):
+        for metadata in api_get(secrets, "/api/v1/metadata"):
             if metadata["implementation"] == KodiEmbyMetadata._implementation:
                 kodi_emby_metadata = metadata
             elif metadata["implementation"] == RoksboxMetadata._implementation:

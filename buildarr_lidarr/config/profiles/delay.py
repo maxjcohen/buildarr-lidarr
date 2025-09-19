@@ -225,7 +225,7 @@ class DelayProfile(LidarrConfigBase):
     ) -> None:
         api_post(
             secrets,
-            "/api/v3/delayprofile",
+            "/api/v1/delayprofile",
             {
                 "order": order,
                 **self.get_create_remote_attrs(tree, self._get_remote_map(tag_ids)),
@@ -251,7 +251,7 @@ class DelayProfile(LidarrConfigBase):
         if changed:
             api_put(
                 secrets,
-                f"/api/v3/delayprofile/{profile_id}",
+                f"/api/v1/delayprofile/{profile_id}",
                 {"id": profile_id, "order": order, **remote_attrs},
             )
             return True
@@ -264,7 +264,7 @@ class DelayProfile(LidarrConfigBase):
         profile_id: int,
     ) -> None:
         logger.info("%s: (...) -> (deleted)", tree)
-        api_delete(secrets, f"/api/v3/delayprofile/{profile_id}")
+        api_delete(secrets, f"/api/v1/delayprofile/{profile_id}")
 
 
 class LidarrDelayProfilesSettingsConfig(LidarrConfigBase):
@@ -303,12 +303,12 @@ class LidarrDelayProfilesSettingsConfig(LidarrConfigBase):
     @classmethod
     def from_remote(cls, secrets: LidarrSecrets) -> Self:
         profiles: List[Dict[str, Any]] = sorted(
-            api_get(secrets, "/api/v3/delayprofile"),
+            api_get(secrets, "/api/v1/delayprofile"),
             key=lambda p: p["order"],
             reverse=True,
         )
         tag_ids: Dict[str, int] = (
-            {tag["label"]: tag["id"] for tag in api_get(secrets, "/api/v3/tag")}
+            {tag["label"]: tag["id"] for tag in api_get(secrets, "/api/v1/tag")}
             if any(profile["tags"] for profile in profiles)
             else {}
         )
@@ -334,10 +334,10 @@ class LidarrDelayProfilesSettingsConfig(LidarrConfigBase):
         changed = False
         #
         profile_ids: List[int] = [
-            profile["id"] for profile in api_get(secrets, "/api/v3/delayprofile")
+            profile["id"] for profile in api_get(secrets, "/api/v1/delayprofile")
         ]
         tag_ids: Dict[str, int] = (
-            {tag["label"]: tag["id"] for tag in api_get(secrets, "/api/v3/tag")}
+            {tag["label"]: tag["id"] for tag in api_get(secrets, "/api/v1/tag")}
             if any(profile.tags for profile in self.definitions)
             or any(profile.tags for profile in remote.definitions)
             else {}

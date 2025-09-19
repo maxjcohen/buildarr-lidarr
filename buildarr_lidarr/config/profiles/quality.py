@@ -283,7 +283,7 @@ class QualityProfile(LidarrConfigBase):
         }
         api_post(
             secrets,
-            "/api/v3/qualityprofile",
+            "/api/v1/qualityprofile",
             {
                 "name": profile_name,
                 **self.get_create_remote_attrs(
@@ -319,14 +319,14 @@ class QualityProfile(LidarrConfigBase):
         if changed:
             api_put(
                 secrets,
-                f"/api/v3/qualityprofile/{profile_id}",
+                f"/api/v1/qualityprofile/{profile_id}",
                 {"id": profile_id, "name": profile_name, **remote_attrs},
             )
             return True
         return False
 
     def _delete_remote(self, secrets: LidarrSecrets, profile_id: int) -> None:
-        api_delete(secrets, f"/api/v3/qualityprofile/{profile_id}")
+        api_delete(secrets, f"/api/v1/qualityprofile/{profile_id}")
 
 
 class LidarrQualityProfilesSettingsConfig(LidarrConfigBase):
@@ -356,7 +356,7 @@ class LidarrQualityProfilesSettingsConfig(LidarrConfigBase):
         return cls(
             definitions={
                 profile["name"]: QualityProfile._from_remote(profile)
-                for profile in api_get(secrets, "/api/v3/qualityprofile")
+                for profile in api_get(secrets, "/api/v1/qualityprofile")
             },
         )
 
@@ -370,12 +370,12 @@ class LidarrQualityProfilesSettingsConfig(LidarrConfigBase):
         changed = False
         profile_ids: Dict[str, int] = {
             profile_json["name"]: profile_json["id"]
-            for profile_json in api_get(secrets, "/api/v3/qualityprofile")
+            for profile_json in api_get(secrets, "/api/v1/qualityprofile")
         }
         quality_definitions: Dict[str, Dict[str, Any]] = {
             quality_json["title"]: quality_json["quality"]
             for quality_json in sorted(
-                api_get(secrets, "/api/v3/qualitydefinition"),
+                api_get(secrets, "/api/v1/qualitydefinition"),
                 key=lambda q: q["weight"],
                 reverse=True,
             )
@@ -405,7 +405,7 @@ class LidarrQualityProfilesSettingsConfig(LidarrConfigBase):
         changed = False
         profile_ids: Dict[str, int] = {
             profile_json["name"]: profile_json["id"]
-            for profile_json in api_get(secrets, "/api/v3/qualityprofile")
+            for profile_json in api_get(secrets, "/api/v1/qualityprofile")
         }
         for profile_name, profile in remote.definitions.items():
             if profile_name not in self.definitions:

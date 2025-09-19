@@ -177,7 +177,7 @@ class LidarrQualitySettingsConfig(LidarrConfigBase):
                     min=definition_json["minSize"],
                     max=definition_json.get("maxSize", None),
                 )
-                for definition_json in api_get(secrets, "/api/v3/qualitydefinition")
+                for definition_json in api_get(secrets, "/api/v1/qualitydefinition")
             },
         )
 
@@ -191,7 +191,7 @@ class LidarrQualitySettingsConfig(LidarrConfigBase):
         changed = False
         remote_definitions_json = {
             definition_json["id"]: definition_json
-            for definition_json in api_get(secrets, "/api/v3/qualitydefinition")
+            for definition_json in api_get(secrets, "/api/v1/qualitydefinition")
         }
         definition_ids: Dict[str, int] = {
             definition_json["quality"]["name"]: definition_id
@@ -211,7 +211,7 @@ class LidarrQualitySettingsConfig(LidarrConfigBase):
                 definition_id = definition_ids[definition_name]
                 api_put(
                     secrets,
-                    f"/api/v3/qualitydefinition/{definition_id}",
+                    f"/api/v1/qualitydefinition/{definition_id}",
                     {**remote_definitions_json[definition_id], **remote_attrs},
                 )
                 changed = True

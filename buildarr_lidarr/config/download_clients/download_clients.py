@@ -334,7 +334,7 @@ class DownloadClient(LidarrConfigBase):
     ) -> None:
         api_post(
             secrets,
-            "/api/v3/downloadclient",
+            "/api/v1/downloadclient",
             {
                 "name": downloadclient_name,
                 "implementation": self._implementation,
@@ -366,7 +366,7 @@ class DownloadClient(LidarrConfigBase):
         if updated:
             api_put(
                 secrets,
-                f"/api/v3/downloadclient/{downloadclient_id}",
+                f"/api/v1/downloadclient/{downloadclient_id}",
                 {
                     "id": downloadclient_id,
                     "name": downloadclient_name,
@@ -380,7 +380,7 @@ class DownloadClient(LidarrConfigBase):
         return False
 
     def _delete_remote(self, secrets: LidarrSecrets, downloadclient_id: int) -> None:
-        api_delete(secrets, f"/api/v3/downloadclient/{downloadclient_id}")
+        api_delete(secrets, f"/api/v1/downloadclient/{downloadclient_id}")
 
 
 class UsenetDownloadClient(DownloadClient):

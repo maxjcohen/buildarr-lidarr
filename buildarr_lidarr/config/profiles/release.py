@@ -332,7 +332,7 @@ class ReleaseProfile(LidarrConfigBase):
     ) -> None:
         api_post(
             secrets,
-            "/api/v3/releaseprofile",
+            "/api/v1/releaseprofile",
             {
                 "name": profile_name,
                 **self.get_create_remote_attrs(tree, self._get_remote_map(indexer_ids, tag_ids)),
@@ -359,14 +359,14 @@ class ReleaseProfile(LidarrConfigBase):
         if changed:
             api_put(
                 secrets,
-                f"/api/v3/releaseprofile/{profile_id}",
+                f"/api/v1/releaseprofile/{profile_id}",
                 {"id": profile_id, "name": profile_name, **remote_attrs},
             )
             return True
         return False
 
     def _delete_remote(self, secrets: LidarrSecrets, profile_id: int) -> None:
-        api_delete(secrets, f"/api/v3/releaseprofile/{profile_id}")
+        api_delete(secrets, f"/api/v1/releaseprofile/{profile_id}")
 
 
 class LidarrReleaseProfilesSettingsConfig(LidarrConfigBase):
@@ -390,14 +390,14 @@ class LidarrReleaseProfilesSettingsConfig(LidarrConfigBase):
 
     @classmethod
     def from_remote(cls, secrets: LidarrSecrets) -> Self:
-        profiles: List[Dict[str, Any]] = api_get(secrets, "/api/v3/releaseprofile")
+        profiles: List[Dict[str, Any]] = api_get(secrets, "/api/v1/releaseprofile")
         indexer_ids: Dict[str, int] = (
-            {tag["name"]: tag["id"] for tag in api_get(secrets, "/api/v3/indexer")}
+            {tag["name"]: tag["id"] for tag in api_get(secrets, "/api/v1/indexer")}
             if any(profile["indexerId"] for profile in profiles)
             else {}
         )
         tag_ids: Dict[str, int] = (
-            {tag["label"]: tag["id"] for tag in api_get(secrets, "/api/v3/tag")}
+            {tag["label"]: tag["id"] for tag in api_get(secrets, "/api/v1/tag")}
             if any(profile["tags"] for profile in profiles)
             else {}
         )
@@ -418,16 +418,16 @@ class LidarrReleaseProfilesSettingsConfig(LidarrConfigBase):
         changed = False
         profile_ids: Dict[str, int] = {
             profile_json["name"]: profile_json["id"]
-            for profile_json in api_get(secrets, "/api/v3/releaseprofile")
+            for profile_json in api_get(secrets, "/api/v1/releaseprofile")
         }
         indexer_ids: Dict[str, int] = (
-            {tag["name"]: tag["id"] for tag in api_get(secrets, "/api/v3/indexer")}
+            {tag["name"]: tag["id"] for tag in api_get(secrets, "/api/v1/indexer")}
             if any(p.indexer for p in self.definitions.values())
             or any(p.indexer for p in remote.definitions.values())
             else {}
         )
         tag_ids: Dict[str, int] = (
-            {tag["label"]: tag["id"] for tag in api_get(secrets, "/api/v3/tag")}
+            {tag["label"]: tag["id"] for tag in api_get(secrets, "/api/v1/tag")}
             if any(profile.tags for profile in self.definitions.values())
             or any(profile.tags for profile in remote.definitions.values())
             else {}
@@ -459,7 +459,7 @@ class LidarrReleaseProfilesSettingsConfig(LidarrConfigBase):
         changed = False
         profile_ids: Dict[str, int] = {
             profile_json["name"]: profile_json["id"]
-            for profile_json in api_get(secrets, "/api/v3/releaseprofile")
+            for profile_json in api_get(secrets, "/api/v1/releaseprofile")
         }
         for profile_name, profile in remote.definitions.items():
             if profile_name not in self.definitions:

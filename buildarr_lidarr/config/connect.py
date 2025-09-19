@@ -310,7 +310,7 @@ class Connection(LidarrConfigBase):
     ) -> None:
         api_post(
             secrets,
-            "/api/v3/notification",
+            "/api/v1/notification",
             {
                 "name": connection_name,
                 "implementation": self._implementation,
@@ -354,7 +354,7 @@ class Connection(LidarrConfigBase):
         if triggers_updated or base_updated:
             api_put(
                 secrets,
-                f"/api/v3/notification/{connection_id}",
+                f"/api/v1/notification/{connection_id}",
                 {
                     "id": connection_id,
                     "name": connection_name,
@@ -382,7 +382,7 @@ class Connection(LidarrConfigBase):
             delete=delete,
         )
         if delete:
-            api_delete(secrets, f"/api/v3/notification/{connection_id}")
+            api_delete(secrets, f"/api/v1/notification/{connection_id}")
             return True
         return False
 
@@ -650,7 +650,7 @@ class EmailConnection(Connection):
 
     *Changed in version 0.5.3*: Disallow RFC-5322 formatted mailbox addresses
     (e.g. `Lidarr Notifications <lidarr@example.com>`), as they are **not**
-    supported by Lidarr V3 (the currently supported version).
+    supported by Lidarr v1 (the currently supported version).
     """
 
     recipient_addresses: Annotated[Set[EmailStr], Field(min_length=1)]
@@ -661,7 +661,7 @@ class EmailConnection(Connection):
 
     *Changed in version 0.5.3*: Disallow RFC-5322 formatted mailbox addresses
     (e.g. `Lidarr Notifications <lidarr@example.com>`), as they are **not**
-    supported by Lidarr V3 (the currently supported version).
+    supported by Lidarr v1 (the currently supported version).
     """
 
     cc_addresses: Set[EmailStr] = set()
@@ -670,7 +670,7 @@ class EmailConnection(Connection):
 
     *Changed in version 0.5.3*: Disallow RFC-5322 formatted mailbox addresses
     (e.g. `Lidarr Notifications <lidarr@example.com>`), as they are **not**
-    supported by Lidarr V3 (the currently supported version).
+    supported by Lidarr v1 (the currently supported version).
     """
 
     bcc_addresses: Set[EmailStr] = set()
@@ -679,7 +679,7 @@ class EmailConnection(Connection):
 
     *Changed in version 0.5.3*: Disallow RFC-5322 formatted mailbox addresses
     (e.g. `Lidarr Notifications <lidarr@example.com>`), as they are **not**
-    supported by Lidarr V3 (the currently supported version).
+    supported by Lidarr v1 (the currently supported version).
     """
 
     _implementation_name: ClassVar[str] = "Email"
@@ -965,7 +965,7 @@ class MailgunConnection(Connection):
 
     *Changed in version 0.5.3*: Disallow RFC-5322 formatted mailbox addresses
     (e.g. `Lidarr Notifications <lidarr@example.com>`), as they are **not**
-    supported by Lidarr V3 (the currently supported version).
+    supported by Lidarr v1 (the currently supported version).
     """
 
     sender_domain: NonEmptyStr
@@ -981,7 +981,7 @@ class MailgunConnection(Connection):
 
     *Changed in version 0.5.3*: Disallow RFC-5322 formatted mailbox addresses
     (e.g. `Lidarr Notifications <lidarr@example.com>`), as they are **not**
-    supported by Lidarr V3 (the currently supported version).
+    supported by Lidarr v1 (the currently supported version).
     """
 
     _implementation: ClassVar[str] = "Mailgun"
@@ -1373,7 +1373,7 @@ class SendgridConnection(Connection):
 
     *Changed in version 0.5.3*: Disallow RFC-5322 formatted mailbox addresses
     (e.g. `Lidarr Notifications <lidarr@example.com>`), as they are **not**
-    supported by Lidarr V3 (the currently supported version).
+    supported by Lidarr v1 (the currently supported version).
     """
 
     recipient_addresses: Annotated[Set[EmailStr], Field(min_length=1)]
@@ -1384,7 +1384,7 @@ class SendgridConnection(Connection):
 
     *Changed in version 0.5.3*: Disallow RFC-5322 formatted mailbox addresses
     (e.g. `Lidarr Notifications <lidarr@example.com>`), as they are **not**
-    supported by Lidarr V3 (the currently supported version).
+    supported by Lidarr v1 (the currently supported version).
     """
 
     _implementation: ClassVar[str] = "SendGrid"
@@ -1527,7 +1527,7 @@ class TraktConnection(Connection):
         shell command to retrieve the generated configuration.
 
         ```bash
-        $ curl -X "GET" "<lidarr-url>/api/v3/notification" -H "X-Api-Key: <api-key>"
+        $ curl -X "GET" "<lidarr-url>/api/v1/notification" -H "X-Api-Key: <api-key>"
         ```
 
     Supported notification triggers: All except `on_grab`, `on_rename`,
@@ -1761,9 +1761,9 @@ class LidarrConnectSettingsConfig(LidarrConfigBase):
 
     @classmethod
     def from_remote(cls, secrets: LidarrSecrets) -> Self:
-        connections = api_get(secrets, "/api/v3/notification")
+        connections = api_get(secrets, "/api/v1/notification")
         tag_ids: Dict[str, int] = (
-            {tag["label"]: tag["id"] for tag in api_get(secrets, "/api/v3/tag")}
+            {tag["label"]: tag["id"] for tag in api_get(secrets, "/api/v1/tag")}
             if any(connection["tags"] for connection in connections)
             else {}
         )
@@ -1789,10 +1789,10 @@ class LidarrConnectSettingsConfig(LidarrConfigBase):
         changed = False
         connection_ids: Dict[str, int] = {
             connection_json["name"]: connection_json["id"]
-            for connection_json in api_get(secrets, "/api/v3/notification")
+            for connection_json in api_get(secrets, "/api/v1/notification")
         }
         tag_ids: Dict[str, int] = (
-            {tag["label"]: tag["id"] for tag in api_get(secrets, "/api/v3/tag")}
+            {tag["label"]: tag["id"] for tag in api_get(secrets, "/api/v1/tag")}
             if any(connection.tags for connection in self.definitions.values())
             or any(connection.tags for connection in remote.definitions.values())
             else {}
@@ -1822,10 +1822,10 @@ class LidarrConnectSettingsConfig(LidarrConfigBase):
         changed = False
         connection_ids: Dict[str, int] = {
             connection_json["name"]: connection_json["id"]
-            for connection_json in api_get(secrets, "/api/v3/notification")
+            for connection_json in api_get(secrets, "/api/v1/notification")
         }
         tag_ids: Dict[str, int] = (
-            {tag["label"]: tag["id"] for tag in api_get(secrets, "/api/v3/tag")}
+            {tag["label"]: tag["id"] for tag in api_get(secrets, "/api/v1/tag")}
             if any(connection.tags for connection in self.definitions.values())
             or any(connection.tags for connection in remote.definitions.values())
             else {}
