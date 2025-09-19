@@ -32,7 +32,7 @@ from ..api import api_get, api_put
 from ..secrets import LidarrSecrets
 from .types import LidarrConfigBase
 
-QUALITYDEFINITION_MAX = 400
+QUALITYDEFINITION_MAX = 800
 """
 The upper bound for the maximum quality allowed in a quality definition.
 """
