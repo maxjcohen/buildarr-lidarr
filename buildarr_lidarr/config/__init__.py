@@ -28,7 +28,6 @@ from ..types import LidarrApiKey, LidarrProtocol
 from .connect import LidarrConnectSettingsConfig
 from .download_clients import LidarrDownloadClientsSettingsConfig
 from .general import LidarrGeneralSettingsConfig
-from .import_lists import LidarrImportListsSettingsConfig
 from .indexers import LidarrIndexersSettingsConfig
 from .media_management import LidarrMediaManagementSettingsConfig
 from .metadata import LidarrMetadataSettingsConfig
@@ -52,7 +51,6 @@ class LidarrSettingsConfig(LidarrConfigBase):
     quality: LidarrQualitySettingsConfig = LidarrQualitySettingsConfig()
     indexers: LidarrIndexersSettingsConfig = LidarrIndexersSettingsConfig()
     download_clients: LidarrDownloadClientsSettingsConfig = LidarrDownloadClientsSettingsConfig()
-    import_lists: LidarrImportListsSettingsConfig = LidarrImportListsSettingsConfig()
     connect: LidarrConnectSettingsConfig = LidarrConnectSettingsConfig()
     metadata: LidarrMetadataSettingsConfig = LidarrMetadataSettingsConfig()
     tags: LidarrTagsSettingsConfig = LidarrTagsSettingsConfig()
@@ -109,12 +107,6 @@ class LidarrSettingsConfig(LidarrConfigBase):
                     remote.profiles,
                     check_unmanaged=check_unmanaged,
                 ),
-                self.import_lists.update_remote(
-                    f"{tree}.import_lists",
-                    secrets,
-                    remote.import_lists,
-                    check_unmanaged=check_unmanaged,
-                ),
                 self.connect.update_remote(
                     f"{tree}.connect",
                     secrets,
@@ -159,11 +151,6 @@ class LidarrSettingsConfig(LidarrConfigBase):
                     f"{tree}.media_management",
                     secrets,
                     remote.media_management,
-                ),
-                self.import_lists.delete_remote(
-                    f"{tree}.import_lists",
-                    secrets,
-                    remote.import_lists,
                 ),
                 self.connect.delete_remote(f"{tree}.connect", secrets, remote.connect),
                 self.tags.delete_remote(f"{tree}.tags", secrets, remote.tags),
