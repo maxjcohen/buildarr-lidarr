@@ -33,29 +33,6 @@ from .types import LidarrConfigBase
 logger = getLogger(__name__)
 
 
-class MultiEpisodeStyle(BaseEnum):
-    """
-    Multi-episode style enumeration.
-    """
-
-    extend = 0
-    duplicate = 1
-    repeat = 2
-    scene = 3
-    range = 4
-    prefixed_range = 5
-
-
-class EpisodeTitleRequired(BaseEnum):
-    """
-    Episode title required enumeration.
-    """
-
-    always = "always"
-    bulk_season_releases = "bulkSeasonReleases"
-    never = "never"
-
-
 class PropersAndRepacks(BaseEnum):
     """
     Propers and repacks configuration enumeration.
@@ -66,9 +43,9 @@ class PropersAndRepacks(BaseEnum):
     do_not_prefer = "doNotPrefer"
 
 
-class RescanSeriesFolderAfterRefresh(BaseEnum):
+class RescanArtistFolderAfterRefresh(BaseEnum):
     """
-    Enumeration for rescan series folder after refresh.
+    Enumeration for rescan artist folder after refresh.
     """
 
     always = "always"
@@ -128,8 +105,8 @@ class LidarrMediaManagementSettingsConfig(LidarrConfigBase):
     and [TRaSH-Guides](https://trash-guides.info/Lidarr/Lidarr-recommended-naming-scheme).
     """
 
-    # Episode Naming
-    rename_episodes: bool = False
+    # Tracks Naming
+    rename_tracks: bool = False
     """
     Rename imported files to the defined standard format.
 
@@ -143,127 +120,10 @@ class LidarrMediaManagementSettingsConfig(LidarrConfigBase):
     If set to `False`, Lidarr will remove them instead.
     """
 
-    standard_episode_format: NonEmptyStr = (
-        "{Series TitleYear} - "
-        "S{season:00}E{episode:00} - "
-        "{Episode CleanTitle} "
-        "[{Preferred Words }{Quality Full}]"
-        "{[MediaInfo VideoDynamicRangeType]}"
-        "{[Mediainfo AudioCodec}{ Mediainfo AudioChannels]}"
-        "{MediaInfo AudioLanguages}"
-        "{[MediaInfo VideoCodec]}"
-        "{-Release Group}"
-    )
-    """
-    File renaming format for a standard episode file.
-
-    The default specified here is the current TRaSH-Guides recommended format,
-    but it will not be applied to the Lidarr instance unless it is explicitly
-    defined in the configuration file.
-    """
-
-    daily_episode_format: NonEmptyStr = (
-        "{Series TitleYear} - "
-        "{Air-Date} - "
-        "{Episode CleanTitle} "
-        "[{Preferred Words }{Quality Full}]"
-        "{[MediaInfo VideoDynamicRangeType]}"
-        "{[Mediainfo AudioCodec}{ Mediainfo AudioChannels]}"
-        "{MediaInfo AudioLanguages}"
-        "{[MediaInfo VideoCodec]}"
-        "{-Release Group}"
-    )
-    """
-    File renaming format for a daily episode file.
-
-    The default specified here is the current TRaSH-Guides recommended format,
-    but it will not be applied to the Lidarr instance unless it is explicitly
-    defined in the configuration file.
-    """
-
-    anime_episode_format: NonEmptyStr = (
-        "{Series TitleYear} - "
-        "S{season:00}E{episode:00} - "
-        "{absolute:000} - "
-        "{Episode CleanTitle} "
-        "[{Preferred Words }{Quality Full}]"
-        "{[MediaInfo VideoDynamicRangeType]}"
-        "[{MediaInfo VideoBitDepth}bit]"
-        "{[MediaInfo VideoCodec]}"
-        "[{Mediainfo AudioCodec} { Mediainfo AudioChannels}]"
-        "{MediaInfo AudioLanguages}"
-        "{-Release Group}"
-    )
-    """
-    File renaming format for an anime episode file.
-
-    The default specified here is the current TRaSH-Guides recommended format,
-    but it will not be applied to the Lidarr instance unless it is explicitly
-    defined in the configuration file.
-    """
-
-    series_folder_format: NonEmptyStr = "{Series TitleYear}"
-    """
-    Renaming format for a series folder.
-
-    The default specified here is the current TRaSH-Guides recommended format,
-    but it will not be applied to the Lidarr instance unless it is explicitly
-    defined in the configuration file.
-    """
-
-    season_folder_format: NonEmptyStr = "Season {season:00}"
-    """
-    Renaming format for a season folder of a series.
-
-    The default specified here is the current TRaSH-Guides recommended format,
-    but it will not be applied to the Lidarr instance unless it is explicitly
-    defined in the configuration file.
-    """
-
-    specials_folder_format: NonEmptyStr = "Specials"
-    """
-    Renaming format for a specials folder of a series.
-
-    The default specified here is the current TRaSH-Guides recommended format,
-    but it will not be applied to the Lidarr instance unless it is explicitly
-    defined in the configuration file.
-    """
-
-    multiepisode_style: MultiEpisodeStyle = MultiEpisodeStyle.range
-    """
-    Formatting style for the episode numbers of a multi-episode media file.
-    """
-
-    # Folders
-    create_empty_series_folders: bool = False
-    """
-    Create missing series folders during disk scan.
-    """
-
     delete_empty_folders: bool = False
     """
     Delete empty series and season folders during disk scan and when
     episode files are deleted.
-    """
-
-    # Importing
-    episode_title_required: EpisodeTitleRequired = EpisodeTitleRequired.always
-    """
-    Prevent importing for up to 48 hours if the episode title
-    is in the naming format and the episode title is TBA.
-
-    Values:
-
-    * `always`
-    * `bulk-season-releases`
-    * `never`
-
-    ```yaml
-    lidarr:
-      settings:
-        media_management:
-          episode_title_required: "always"
-    ```
     """
 
     skip_free_space_check: bool = False
@@ -292,12 +152,6 @@ class LidarrMediaManagementSettingsConfig(LidarrConfigBase):
     import_extra_files: bool = False
     """
     Import matching extra files (subtitles, `.nfo` file, etc) after importing an episode file.
-    """
-
-    # File Management
-    unmonitor_deleted_episodes: bool = False
-    """
-    Episodes deleted from disk are automatically unmonitored in Lidarr.
     """
 
     propers_and_repacks: PropersAndRepacks = PropersAndRepacks.do_not_prefer
@@ -330,11 +184,11 @@ class LidarrMediaManagementSettingsConfig(LidarrConfigBase):
     or network activity during scans.
     """
 
-    rescan_series_folder_after_refresh: RescanSeriesFolderAfterRefresh = (
-        RescanSeriesFolderAfterRefresh.always
+    rescan_artist_folder_after_refresh: RescanArtistFolderAfterRefresh = (
+        RescanArtistFolderAfterRefresh.always
     )
     """
-    Rescan the series folder after refreshing the series.
+    Rescan the artist folder after refreshing the series.
 
     Values:
 
@@ -346,13 +200,12 @@ class LidarrMediaManagementSettingsConfig(LidarrConfigBase):
     lidarr:
       settings:
         media_management:
-          rescan_series_folder_after_refresh: "always"
+          rescan_artist_folder_after_refresh: "always"
     ```
 
     NOTE: Lidarr will not automatically detect changes to files
     if this option is not set to `always`.
     """
-
     change_file_date: ChangeFileDate = ChangeFileDate.none
     """
     Change file date on import/rescan.
@@ -454,31 +307,19 @@ class LidarrMediaManagementSettingsConfig(LidarrConfigBase):
 
     _naming_remote_map: ClassVar[List[RemoteMapEntry]] = [
         # Episode Naming
-        ("rename_episodes", "renameEpisodes", {}),
-        ("replace_illegal_characters", "replaceIllegalCharacters", {}),
-        ("standard_episode_format", "standardEpisodeFormat", {}),
-        ("daily_episode_format", "dailyEpisodeFormat", {}),
-        ("anime_episode_format", "animeEpisodeFormat", {}),
-        ("series_folder_format", "seriesFolderFormat", {}),
-        ("season_folder_format", "seasonFolderFormat", {}),
-        ("specials_folder_format", "specialsFolderFormat", {}),
-        ("multiepisode_style", "multiEpisodeStyle", {}),
+        ("rename_tracks", "renameTracks", {}),
     ]
     _mediamanagement_remote_map: ClassVar[List[RemoteMapEntry]] = [
         # Folders
-        ("create_empty_series_folders", "createEmptySeriesFolders", {}),
         ("delete_empty_folders", "deleteEmptyFolders", {}),
         # Importing
-        ("episode_title_required", "episodeTitleRequired", {}),
         ("skip_free_space_check", "skipFreeSpaceCheckWhenImporting", {}),
         ("minimum_free_space", "minimumFreeSpaceWhenImporting", {}),
         ("use_hardlinks", "copyUsingHardlinks", {}),
         ("import_extra_files", "importExtraFiles", {}),
         # File Management
-        ("unmonitor_deleted_episodes", "autoUnmonitorPreviouslyDownloadedEpisodes", {}),
         ("propers_and_repacks", "downloadPropersAndRepacks", {}),
-        ("analyze_video_files", "enableMediaInfo", {}),
-        ("rescan_series_folder_after_refresh", "rescanAfterRefresh", {}),
+        ("rescan_artist_folder_after_refresh", "rescanAfterRefresh", {}),
         ("change_file_date", "fileDate", {}),
         (
             "recycling_bin",
@@ -612,7 +453,16 @@ class LidarrMediaManagementSettingsConfig(LidarrConfigBase):
                 logger.debug("%s[%i]: %s (exists)", tree, i, repr(str(root_folder)))
             else:
                 logger.info("%s[%i]: %s -> (created)", tree, i, repr(str(root_folder)))
-                api_post(secrets, "/api/v1/rootfolder", {"path": str(root_folder)})
+                api_post(
+                    secrets,
+                    "/api/v1/rootfolder",
+                    {
+                        "path": str(root_folder),
+                        "name": str(root_folder),
+                        "defaultQualityProfileId": 1,
+                        "defaultMetadataProfileId": 1,
+                    },
+                )
                 changed = True
         return changed
 
