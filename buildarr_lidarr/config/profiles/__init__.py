@@ -20,7 +20,6 @@ from __future__ import annotations
 
 from ..types import LidarrConfigBase
 from .delay import LidarrDelayProfilesSettingsConfig
-from .language import LidarrLanguageProfilesSettingsConfig
 from .quality import LidarrQualityProfilesSettingsConfig
 from .release import LidarrReleaseProfilesSettingsConfig
 
@@ -31,6 +30,5 @@ class LidarrProfilesSettingsConfig(LidarrConfigBase):
     """
 
     quality_profiles: LidarrQualityProfilesSettingsConfig = LidarrQualityProfilesSettingsConfig()
-    language_profiles: LidarrLanguageProfilesSettingsConfig = LidarrLanguageProfilesSettingsConfig()
     delay_profiles: LidarrDelayProfilesSettingsConfig = LidarrDelayProfilesSettingsConfig()
     release_profiles: LidarrReleaseProfilesSettingsConfig = LidarrReleaseProfilesSettingsConfig()
