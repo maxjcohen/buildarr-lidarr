@@ -94,55 +94,11 @@ class KodiEmbyMetadata(Metadata):
         metadata:
           kodi_emby:
             enable: true
-            series_metadata: true
-            series_metadata_url: true
-            episode_metadata: true
-            series_images: true
-            season_images: true
-            episode_images: true
     ```
     """
 
-    series_metadata: bool = False
-    """
-    Create `tvshow.nfo` with full series metadata.
-    """
-
-    series_metadata_url: bool = False
-    """
-    Add the TVDB show URL to `tvshow.nfo`. Can be combined with `series_metadata`.
-    """
-
-    episode_metadata: bool = False
-    """
-    Create episode-specific metadata as `<filename>.nfo`.
-    """
-
-    series_images: bool = False
-    """
-    Save series images to `fanart.jpg`, `poster.jpg` and `banner.jpg`.
-    """
-
-    season_images: bool = False
-    """
-    Save season images to `season##-poster.jpg`/`season-specials-poster.jpg`
-    and `season##-banner.jpg`/`season-specials-banner.jpg`.
-    """
-
-    episode_images: bool = False
-    """
-    Save episode images to `<filename>-thumb.jpg`.
-    """
-
     _implementation: ClassVar[str] = "XbmcMetadata"
-    _remote_map: ClassVar[List[RemoteMapEntry]] = [
-        ("series_metadata", "seriesMetadata", {"is_field": True}),
-        ("series_metadata_url", "seriesMetadataUrl", {"is_field": True}),
-        ("episode_metadata", "episodeMetadata", {"is_field": True}),
-        ("series_images", "seriesImages", {"is_field": True}),
-        ("season_images", "seasonImages", {"is_field": True}),
-        ("episode_images", "episodeImages", {"is_field": True}),
-    ]
+    _remote_map: ClassVar[List[RemoteMapEntry]] = []
 
 
 class RoksboxMetadata(Metadata):
@@ -155,40 +111,11 @@ class RoksboxMetadata(Metadata):
         metadata:
           roksbox:
             enable: true
-            episode_metadata: true
-            series_images: true
-            season_images: true
-            episode_images: true
     ```
     """
 
-    episode_metadata: bool = False
-    """
-    Create episode-specific metadata as `Season##/<filename>.xml`.
-    """
-
-    series_images: bool = False
-    """
-    Save series images to `<Series Title>.jpg`.
-    """
-
-    season_images: bool = False
-    """
-    Save season images to `Season ##.jpg`.
-    """
-
-    episode_images: bool = False
-    """
-    Save episode images to `Season##/<filename>.jpg`.
-    """
-
     _implementation: ClassVar[str] = "RoksboxMetadata"
-    _remote_map: ClassVar[List[RemoteMapEntry]] = [
-        ("episode_metadata", "episodeMetadata", {"is_field": True}),
-        ("series_images", "seriesImages", {"is_field": True}),
-        ("season_images", "seasonImages", {"is_field": True}),
-        ("episode_images", "episodeImages", {"is_field": True}),
-    ]
+    _remote_map: ClassVar[List[RemoteMapEntry]] = []
 
 
 class WdtvMetadata(Metadata):
@@ -201,41 +128,11 @@ class WdtvMetadata(Metadata):
         metadata:
           wdtv:
             enable: true
-            episode_metadata: true
-            series_images: true
-            season_images: true
-            episode_images: true
     ```
     """
 
-    episode_metadata: bool = False
-    """
-    Create episode-specific metadata as `<filename>.nfo`.
-    """
-
-    series_images: bool = False
-    """
-    Save series images to `fanart.jpg`, `poster.jpg` and `banner.jpg`.
-    """
-
-    season_images: bool = False
-    """
-    Save as images to `season##-poster.jpg`/`season-specials-poster.jpg`
-    and `season##-banner.jpg`/`season-specials-banner.jpg`.
-    """
-
-    episode_images: bool = False
-    """
-    Save episode images to `<filename>-thumb.jpg`.
-    """
-
     _implementation: ClassVar[str] = "WdtvMetadata"
-    _remote_map: ClassVar[List[RemoteMapEntry]] = [
-        ("episode_metadata", "episodeMetadata", {"is_field": True}),
-        ("series_images", "seriesImages", {"is_field": True}),
-        ("season_images", "seasonImages", {"is_field": True}),
-        ("episode_images", "episodeImages", {"is_field": True}),
-    ]
+    _remote_map: ClassVar[List[RemoteMapEntry]] = []
 
 
 METADATA_TYPES: Tuple[Type[Metadata], ...] = (KodiEmbyMetadata, RoksboxMetadata, WdtvMetadata)
