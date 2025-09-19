@@ -5,7 +5,7 @@
 groups = ["default", "lint", "run"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:57e8abd480c220b130c405c97e9081e55eb8d587c0d7210c078d7eae5f07ae25"
+content_hash = "sha256:010759149d11d7579662edd8f56264c71fd236702dd869816c14dfd24d7dd1ec"
 
 [[metadata.targets]]
 requires_python = ">=3.8"
@@ -52,6 +52,21 @@ dependencies = [
     "stevedore>=4.0.0",
     "typing-extensions>=4.0.1",
     "watchdog>=3.0.0",
+]
+
+[[package]]
+name = "buildarr-prowlarr"
+version = "0.1.dev61"
+requires_python = ">=3.8"
+git = "https://github.com/maxjcohen/buildarr-prowlarr"
+ref = "factory"
+revision = "6e532292b15cb70ee7f2ec3189687b34dc03a2e2"
+summary = "Prowlarr indexer manager plugin for Buildarr"
+groups = ["run"]
+dependencies = [
+    "json5>=0.9.7",
+    "packaging>=25.0",
+    "prowlarr-py>=1.1.0",
 ]
 
 [[package]]
@@ -248,7 +263,7 @@ name = "json5"
 version = "0.12.1"
 requires_python = ">=3.8.0"
 summary = "A Python implementation of the JSON5 data format."
-groups = ["default"]
+groups = ["default", "run"]
 files = [
     {file = "json5-0.12.1-py3-none-any.whl", hash = "sha256:d9c9b3bc34a5f54d43c35e11ef7cb87d8bdd098c6ace87117a7b7e83e705c1d5"},
     {file = "json5-0.12.1.tar.gz", hash = "sha256:b2743e77b3242f8d03c143dd975a6ec7c52e2f2afe76ed934e53503dd4ad4990"},
@@ -318,6 +333,17 @@ files = [
 ]
 
 [[package]]
+name = "packaging"
+version = "25.0"
+requires_python = ">=3.8"
+summary = "Core utilities for Python packages"
+groups = ["run"]
+files = [
+    {file = "packaging-25.0-py3-none-any.whl", hash = "sha256:29572ef2b1f17581046b3a2227d5c611fb25ec70ca1ba8554b24b0e69331a484"},
+    {file = "packaging-25.0.tar.gz", hash = "sha256:d443872c98d677bf60f6a1f2f8c1cb748e8fe762d2bf9d3148b5599295b0fc4f"},
+]
+
+[[package]]
 name = "pbr"
 version = "7.0.1"
 requires_python = ">=2.6"
@@ -329,6 +355,22 @@ dependencies = [
 files = [
     {file = "pbr-7.0.1-py2.py3-none-any.whl", hash = "sha256:32df5156fbeccb6f8a858d1ebc4e465dcf47d6cc7a4895d5df9aa951c712fc35"},
     {file = "pbr-7.0.1.tar.gz", hash = "sha256:3ecbcb11d2b8551588ec816b3756b1eb4394186c3b689b17e04850dfc20f7e57"},
+]
+
+[[package]]
+name = "prowlarr-py"
+version = "1.1.0"
+summary = "Prowlarr"
+groups = ["run"]
+dependencies = [
+    "pydantic>=2",
+    "python-dateutil>=2.8.2",
+    "typing-extensions>=4.7.1",
+    "urllib3<3.0.0,>=1.25.3",
+]
+files = [
+    {file = "prowlarr_py-1.1.0-py3-none-any.whl", hash = "sha256:d7d7a3cf23bb9d0bc5e4131218ad677fd9c45913c3947596dd14d4dbf5119118"},
+    {file = "prowlarr_py-1.1.0.tar.gz", hash = "sha256:9834e1a6a92d543a6d5c1211a3c6c71343e5f0a0784865f2a276f1876783827c"},
 ]
 
 [[package]]
@@ -476,6 +518,20 @@ files = [
 ]
 
 [[package]]
+name = "python-dateutil"
+version = "2.9.0.post0"
+requires_python = "!=3.0.*,!=3.1.*,!=3.2.*,>=2.7"
+summary = "Extensions to the standard Python datetime module"
+groups = ["run"]
+dependencies = [
+    "six>=1.5",
+]
+files = [
+    {file = "python-dateutil-2.9.0.post0.tar.gz", hash = "sha256:37dd54208da7e1cd875388217d5e00ebd4179249f90fb72437e91a35459a0ad3"},
+    {file = "python_dateutil-2.9.0.post0-py2.py3-none-any.whl", hash = "sha256:a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427"},
+]
+
+[[package]]
 name = "pyyaml"
 version = "6.0.2"
 requires_python = ">=3.8"
@@ -601,6 +657,17 @@ groups = ["run"]
 files = [
     {file = "setuptools-75.3.2-py3-none-any.whl", hash = "sha256:90ab613b6583fc02d5369cbca13ea26ea0e182d1df2d943ee9cbe81d4c61add9"},
     {file = "setuptools-75.3.2.tar.gz", hash = "sha256:3c1383e1038b68556a382c1e8ded8887cd20141b0eb5708a6c8d277de49364f5"},
+]
+
+[[package]]
+name = "six"
+version = "1.17.0"
+requires_python = "!=3.0.*,!=3.1.*,!=3.2.*,>=2.7"
+summary = "Python 2 and 3 compatibility utilities"
+groups = ["run"]
+files = [
+    {file = "six-1.17.0-py2.py3-none-any.whl", hash = "sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274"},
+    {file = "six-1.17.0.tar.gz", hash = "sha256:ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81"},
 ]
 
 [[package]]

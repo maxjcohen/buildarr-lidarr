@@ -54,7 +54,8 @@ test = [
     "pytest-mock>=3.12.0",
 ]
 run = [
-    "buildarr @ git+https://github.com/maxjcohen/buildarr"
+    "buildarr @ git+https://github.com/maxjcohen/buildarr",
+    "buildarr-prowlarr @ git+https://github.com/maxjcohen/buildarr-prowlarr@factory",
 ]
 
 [project.urls]
