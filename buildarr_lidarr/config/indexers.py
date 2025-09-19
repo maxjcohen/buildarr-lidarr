@@ -23,7 +23,6 @@ from typing import (
     Any,
     ClassVar,
     Dict,
-    Iterable,
     List,
     Literal,
     Mapping,
@@ -37,7 +36,7 @@ from typing import (
 
 from buildarr.config import RemoteMapEntry
 from buildarr.types import BaseEnum, NonEmptyStr, Password, RssUrl
-from pydantic import AnyHttpUrl, Field, NonNegativeInt, PositiveInt, field_validator
+from pydantic import AnyHttpUrl, Field, NonNegativeInt, PositiveInt
 from typing_extensions import Annotated, Self
 
 from ..api import api_delete, api_get, api_post, api_put
@@ -57,9 +56,9 @@ class NabCategory(BaseEnum):
     TV_UHD = (5045, "TV/UHD")
     TV_OTHER = (5050, "TV/Other")
     TV_SPORT = (5060, "TV/Sport", "TV/Sports")
-    TV_ANIME = (5070, "TV/Anime")
     TV_DOCUMENTARY = (5080, "TV/Documentary")
     TV_X265 = (5090, "TV/x265")
+    AUDIO = (3000, "Audio")
 
     @classmethod
     def decode(cls, value: int) -> Union[Self, int]:
@@ -78,7 +77,6 @@ class FilelistCategory(BaseEnum):
     Filelist category enumeration.
     """
 
-    ANIME = "Anime"
     ANIMATION = "Animation"
     TV_4K = "TV 4K"
     TV_HD = "TV HD"
@@ -101,7 +99,6 @@ class Indexer(LidarrConfigBase):
             enable_rss: true
             enable_automatic_search: true
             enable_interactive_search: true
-            anime_standard_format_search: true
             indexer_priority: 25
             download_client: null
             tags:
@@ -297,13 +294,6 @@ class TorrentIndexer(Indexer):
     If unset or set to `null`, use the download client's defaults.
     """
 
-    seasonpack_seed_time: Optional[int] = None  # minutes
-    """
-    The amount of time (in minutes) a season-pack torrent should be seeded before stopping.
-
-    If unset or set to `null`, use the download client's defaults.
-    """
-
     @classmethod
     def _get_base_remote_map(
         cls,
@@ -315,11 +305,6 @@ class TorrentIndexer(Indexer):
             ("minimum_seeders", "minimumSeeders", {"is_field": True, "field_default": None}),
             ("seed_ratio", "seedCriteria.seedRatio", {"is_field": True, "field_default": None}),
             ("seed_time", "seedCriteria.seedTime", {"is_field": True, "field_default": None}),
-            (
-                "seasonpack_seed_time",
-                "seedCriteria.seasonPackSeedTime",
-                {"is_field": True, "field_default": None},
-            ),
         ]
 
 
@@ -338,17 +323,11 @@ class FanzubIndexer(UsenetIndexer):
     A URL to a Fanzub compatible RSS feed.
     """
 
-    anime_standard_format_search: bool = False
-    """
-    Also search for anime using the standard numbering. Only applies for Anime series types.
-    """
-
     _implementation = "Fanzub"
     _implementation_name = "Fanzub"
     _config_contract = "FanzubSettings"
     _remote_map: ClassVar[List[RemoteMapEntry]] = [
         ("rss_url", "rssUrl", {"is_field": True}),
-        ("anime_standard_format_search", "animeStandardFormatSearch", {"is_field": True}),
     ]
 
 
@@ -394,42 +373,12 @@ class NewznabIndexer(UsenetIndexer):
     * `TV/UHD`
     * `TV/Other`
     * `TV/Sport`
-    * `TV/Anime`
     * `TV/Documentary`
     * `TV/x265`
 
     *Changed in version 0.6.1*: The Lidarr-native values for Newznab/Torznab categories
     (e.g. `TV/WEB-DL`) can now be specified, instead of the Buildarr-native values
     (e.g. `TV-WEBDL`). The old values can still be used.
-    """
-
-    anime_categories: Set[NabCategory] = set()
-    """
-    Categories to monitor for anime.
-    Define as empty to disable.
-
-    Values:
-
-    * `TV`
-    * `TV/WEB-DL`
-    * `TV/Foreign`
-    * `TV/SD`
-    * `TV/HD`
-    * `TV/UHD`
-    * `TV/Other`
-    * `TV/Sport`
-    * `TV/Anime`
-    * `TV/Documentary`
-    * `TV/x265`
-
-    *Changed in version 0.6.1*: The Lidarr-native values for Newznab/Torznab categories
-    (e.g. `TV/WEB-DL`) can now be specified, instead of the Buildarr-native values
-    (e.g. `TV-WEBDL`). The old values can still be used.
-    """
-
-    anime_standard_format_search: bool = False
-    """
-    Also search for anime using the standard numbering. Only applies for Anime series types.
     """
 
     additional_parameters: Optional[str] = None
@@ -450,29 +399,11 @@ class NewznabIndexer(UsenetIndexer):
             {"is_field": True, "encoder": lambda v: sorted(NabCategory.encode(c) for c in v)},
         ),
         (
-            "anime_categories",
-            "animeCategories",
-            {"is_field": True, "encoder": lambda v: sorted(NabCategory.encode(c) for c in v)},
-        ),
-        ("anime_standard_format_search", "animeStandardFormatSearch", {"is_field": True}),
-        (
             "additional_parameters",
             "additionalParameters",
             {"is_field": True, "field_default": None, "decoder": lambda v: v or None},
         ),
     ]
-
-    @field_validator("categories", "anime_categories")
-    @classmethod
-    def validate_categories(
-        cls,
-        value: Iterable[Union[NabCategory, int]],
-    ) -> Set[Union[NabCategory, int]]:
-        return set(
-            NabCategory.decode(category) if isinstance(category, int) else category
-            for category in value
-        )
-
 
 class OmgwtfnzbsIndexer(UsenetIndexer):
     """
@@ -578,23 +509,6 @@ class FilelistIndexer(TorrentIndexer):
 
     Values:
 
-    * `Anime`
-    * `Animation`
-    * `TV 4K`
-    * `TV HD`
-    * `TV SD`
-    * `Sport`
-    """
-
-    anime_categories: Set[FilelistCategory] = set()
-    """
-    Categories to monitor for anime new releases.
-
-    Leave empty to not monitor for anime.
-
-    Values:
-
-    * `Anime`
     * `Animation`
     * `TV 4K`
     * `TV HD`
@@ -612,11 +526,6 @@ class FilelistIndexer(TorrentIndexer):
         (
             "categories",
             "categories",
-            {"is_field": True, "encoder": lambda v: sorted(c.value for c in v)},
-        ),
-        (
-            "anime_categories",
-            "animeCategories",
             {"is_field": True, "encoder": lambda v: sorted(c.value for c in v)},
         ),
     ]
@@ -708,11 +617,6 @@ class NyaaIndexer(TorrentIndexer):
     HTTPS URL for accessing Nyaa.
     """
 
-    anime_standard_format_search: bool = False
-    """
-    Also search for anime using the standard numbering. Only applies for Anime series types.
-    """
-
     additional_parameters: Optional[str] = "&cats=1_0&filter=1"
     """
     Parameters to send in the Nyaa search request.
@@ -726,7 +630,6 @@ class NyaaIndexer(TorrentIndexer):
     _config_contract = "NyaaSettings"
     _remote_map: ClassVar[List[RemoteMapEntry]] = [
         ("website_url", "websiteUrl", {"is_field": True}),
-        ("anime_standard_format_search", "animeStandardFormatSearch", {"is_field": True}),
         (
             "additional_parameters",
             "additionalParameters",
@@ -902,41 +805,12 @@ class TorznabIndexer(TorrentIndexer):
     * `TV/UHD`
     * `TV/Other`
     * `TV/Sport`
-    * `TV/Anime`
     * `TV/Documentary`
     * `TV/x265`
 
     *Changed in version 0.6.1*: The Lidarr-native values for Newznab/Torznab categories
     (e.g. `TV/WEB-DL`) can now be specified, instead of the Buildarr-native values
     (e.g. `TV-WEBDL`). The old values can still be used.
-    """
-
-    anime_categories: Set[NabCategory] = set()
-    """
-    Categories to monitor for anime.
-
-    Values:
-
-    * `TV`
-    * `TV/WEB-DL`
-    * `TV/Foreign`
-    * `TV/SD`
-    * `TV/HD`
-    * `TV/UHD`
-    * `TV/Other`
-    * `TV/Sport`
-    * `TV/Anime`
-    * `TV/Documentary`
-    * `TV/x265`
-
-    *Changed in version 0.6.1*: The Lidarr-native values for Newznab/Torznab categories
-    (e.g. `TV/WEB-DL`) can now be specified, instead of the Buildarr-native values
-    (e.g. `TV-WEBDL`). The old values can still be used.
-    """
-
-    anime_standard_format_search: bool = False
-    """
-    Also search for anime using the standard numbering. Only applies for Anime series types.
     """
 
     additional_parameters: Optional[str] = None
@@ -957,29 +831,11 @@ class TorznabIndexer(TorrentIndexer):
             {"is_field": True, "encoder": lambda v: sorted(NabCategory.encode(c) for c in v)},
         ),
         (
-            "anime_categories",
-            "animeCategories",
-            {"is_field": True, "encoder": lambda v: sorted(NabCategory.encode(c) for c in v)},
-        ),
-        ("anime_standard_format_search", "animeStandardFormatSearch", {"is_field": True}),
-        (
             "additional_parameters",
             "additionalParameters",
             {"is_field": True, "field_default": None, "decoder": lambda v: v or None},
         ),
     ]
-
-    @field_validator("categories", "anime_categories")
-    @classmethod
-    def validate_categories(
-        cls,
-        value: Iterable[Union[NabCategory, int]],
-    ) -> Set[Union[NabCategory, int]]:
-        return set(
-            NabCategory.decode(category) if isinstance(category, int) else category
-            for category in value
-        )
-
 
 INDEXER_TYPES: Tuple[Type[Indexer], ...] = (
     FanzubIndexer,
@@ -1038,7 +894,6 @@ class LidarrIndexersSettingsConfig(LidarrConfigBase):
               enable_rss: true
               enable_automatic_search: true
               enable_interactive_search: true
-              anime_standard_format_search: true
               indexer_priority: 25
               download_client: null
               tags:
