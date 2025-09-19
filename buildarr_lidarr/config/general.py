@@ -210,17 +210,17 @@ class SecurityGeneralSettings(GeneralSettings):
     !!! warning
 
         When the authentication method is set to `external`,
-        **authentication is disabled within Sonarr itself.**
+        **authentication is disabled within Lidarr itself.**
 
-        **Make sure access to Sonarr is secured**, either by using a reverse proxy with
-        forward authentication configured, or not exposing Sonarr to the public Internet.
+        **Make sure access to Lidarr is secured**, either by using a reverse proxy with
+        forward authentication configured, or not exposing Lidarr to the public Internet.
 
     Requires a restart of Lidarr to take effect.
     """
 
     authentication_required: AuthenticationRequired = AuthenticationRequired.enabled
     """
-    Authentication requirement settings for accessing Sonarr.
+    Authentication requirement settings for accessing Lidarr.
 
     Values:
 
