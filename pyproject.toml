@@ -53,6 +53,9 @@ test = [
     "pytest-httpserver>=1.0.10",
     "pytest-mock>=3.12.0",
 ]
+run = [
+    "buildarr @ git+https://github.com/maxjcohen/buildarr"
+]
 
 [project.urls]
 Homepage = "https://buildarr.github.io"
