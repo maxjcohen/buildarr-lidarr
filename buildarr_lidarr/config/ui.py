@@ -29,6 +29,16 @@ from ..secrets import LidarrSecrets
 from .types import LidarrConfigBase
 
 
+class UILanguage(BaseEnum):
+    english = 1
+
+
+class Theme(BaseEnum):
+    auto = "auto"
+    dark = "dark"
+    light = "light"
+
+
 class FirstDayOfWeek(BaseEnum):
     """
     First day of the week enumeration for Lidarr.
@@ -96,6 +106,51 @@ class LidarrUISettingsConfig(LidarrConfigBase):
           show_relative_dates: true
           enable_color_impaired_mode: false
     ```
+    """
+
+    expand_album_by_default: bool = False
+    """
+    When set to `True`, set Lidarr to expand albums by default.
+    """
+
+    expand_single_by_default: bool = False
+    """
+    When set to `True`, set Lidarr to expand singles by default.
+    """
+
+    expand_ep_by_default: bool = False
+    """
+    When set to `True`, set Lidarr to expand EPs by default.
+    """
+
+    expand_broadcast_by_default: bool = False
+    """
+    When set to `True`, set Lidarr to expand broadcasts by default.
+    """
+
+    expand_other_by_default: bool = False
+    """
+    When set to `True`, set Lidarr to expand others by default.
+    """
+
+    theme: Theme = Theme.auto
+    """
+    Interface theme
+
+    Values:
+
+    * `auto` - auto
+    * `dark` - dark
+    * `light` - light
+    """
+
+    ui_language: UILanguage = UILanguage.english
+    """
+    Interface language
+
+    Values:
+
+    * `english` - English
     """
 
     # Calendar
@@ -170,6 +225,13 @@ class LidarrUISettingsConfig(LidarrConfigBase):
     """
 
     _remote_map: ClassVar[List[RemoteMapEntry]] = [
+        ("expand_album_by_default", "expandAlbumByDefault", {}),
+        ("expand_single_by_default", "expandSingleByDefault", {}),
+        ("expand_ep_by_default", "expandEPByDefault", {}),
+        ("expand_broadcast_by_default", "expandBroadcastByDefault", {}),
+        ("expand_other_by_default", "expandOtherByDefault", {}),
+        ("theme", "theme", {}),
+        ("ui_language", "uiLanguage", {}),
         ("first_day_of_week", "firstDayOfWeek", {}),
         ("week_column_header", "calendarWeekColumnHeader", {}),
         ("short_date_format", "shortDateFormat", {}),
