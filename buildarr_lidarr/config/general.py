@@ -13,7 +13,7 @@
 
 
 """
-Sonarr plugin general settings configuration.
+Lidarr plugin general settings configuration.
 """
 
 from __future__ import annotations
@@ -27,13 +27,13 @@ from pydantic import Field
 from typing_extensions import Annotated, Self
 
 from ..api import api_get, api_put
-from ..secrets import SonarrSecrets
-from .types import SonarrConfigBase
+from ..secrets import LidarrSecrets
+from .types import LidarrConfigBase
 
 
 class AuthenticationMethod(BaseEnum):
     """
-    Sonarr authentication method.
+    Lidarr authentication method.
     """
 
     none = "none"
@@ -61,9 +61,9 @@ class ProxyType(BaseEnum):
     socks5 = "socks5"
 
 
-class SonarrLogLevel(BaseEnum):
+class LidarrLogLevel(BaseEnum):
     """
-    Log level of the Sonarr application.
+    Log level of the Lidarr application.
     """
 
     INFO = "info"
@@ -73,7 +73,7 @@ class SonarrLogLevel(BaseEnum):
 
 class UpdateMechanism(BaseEnum):
     """
-    Sonarr updating mechanism.
+    Lidarr updating mechanism.
     """
 
     builtin = "builtIn"
@@ -83,9 +83,9 @@ class UpdateMechanism(BaseEnum):
     docker = "docker"
 
 
-class GeneralSettings(SonarrConfigBase):
+class GeneralSettings(LidarrConfigBase):
     """
-    Sonarr general settings base class.
+    Lidarr general settings base class.
     """
 
     _remote_map: ClassVar[List[RemoteMapEntry]]
@@ -97,7 +97,7 @@ class GeneralSettings(SonarrConfigBase):
     def _update_remote_attrs(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         remote: Self,
         check_unmanaged: bool = False,
     ) -> Tuple[bool, Dict[str, Any]]:
@@ -112,31 +112,31 @@ class GeneralSettings(SonarrConfigBase):
 
 class HostGeneralSettings(GeneralSettings):
     """
-    Sonarr instance connection and name configuration.
+    Lidarr instance connection and name configuration.
 
-    Many of these settings configure Sonarr's external connection interface.
+    Many of these settings configure Lidarr's external connection interface.
     If they are changed, the [settings Buildarr uses to connect](host.md) with this
-    Sonarr instance may need to be updated, so take care when modifying them.
+    Lidarr instance may need to be updated, so take care when modifying them.
 
-    **Changing any of these settings require a restart of Sonarr to take effect.**
+    **Changing any of these settings require a restart of Lidarr to take effect.**
     """
 
     # According to docs, IPv6 not supported at this time.
     bind_address: Union[Literal["*"], IPv4Address] = "*"
     """
-    Bind address for Sonarr. Set to an IPv4 address bound to a local interface
+    Bind address for Lidarr. Set to an IPv4 address bound to a local interface
     or `*` to bind on all interfaces.
 
-    Unless you run Sonarr directly on a host machine (i.e. not via Docker) and
-    want Sonarr to only be available on a specific network or interface,
+    Unless you run Lidarr directly on a host machine (i.e. not via Docker) and
+    want Lidarr to only be available on a specific network or interface,
     this generally should be left untouched.
     """
 
     port: Port = 8989
     """
-    Unencrypted (HTTP) listening port for Sonarr.
+    Unencrypted (HTTP) listening port for Lidarr.
 
-    If Sonarr is being run via Docker in the default bridge mode,
+    If Lidarr is being run via Docker in the default bridge mode,
     this setting shouldn't be changed.
     Instead, change the external port it is bound to using
     `--publish <port number>:8989`.
@@ -144,9 +144,9 @@ class HostGeneralSettings(GeneralSettings):
 
     ssl_port: Port = 9898
     """
-    Encrypted (HTTPS) listening port for Sonarr.
+    Encrypted (HTTPS) listening port for Lidarr.
 
-    If Sonarr is being run via Docker in the default bridge mode,
+    If Lidarr is being run via Docker in the default bridge mode,
     this setting shouldn't be changed.
     Instead, change the external port it is bound to using
     `--publish <port number>:9898`.
@@ -154,21 +154,21 @@ class HostGeneralSettings(GeneralSettings):
 
     use_ssl: bool = False
     """
-    Enable the encrypted (HTTPS) listening port in Sonarr.
-    As Sonarr only supports self-signed certificates, it is recommended
-    to put Sonarr behind a HTTPS-terminating reverse proxy such as Nginx, Caddy or Traefik.
+    Enable the encrypted (HTTPS) listening port in Lidarr.
+    As Lidarr only supports self-signed certificates, it is recommended
+    to put Lidarr behind a HTTPS-terminating reverse proxy such as Nginx, Caddy or Traefik.
     """
 
     url_base: Optional[str] = None
     """
-    Add a prefix to all Sonarr URLs,
+    Add a prefix to all Lidarr URLs,
     e.g. `http://localhost:8989/<url_base>/settings/general`.
 
-    Generally used to accommodate reverse proxies where Sonarr
-    is assigned to a subfolder, e.g. `https://example.com/sonarr`.
+    Generally used to accommodate reverse proxies where Lidarr
+    is assigned to a subfolder, e.g. `https://example.com/lidarr`.
     """
 
-    instance_name: NonEmptyStr = "Sonarr"
+    instance_name: NonEmptyStr = "Lidarr"
     """
     Instance name in the browser tab and in syslog.
     """
@@ -185,12 +185,12 @@ class HostGeneralSettings(GeneralSettings):
 
 class SecurityGeneralSettings(GeneralSettings):
     """
-    Sonarr instance security (authentication) settings.
+    Lidarr instance security (authentication) settings.
     """
 
     authentication: AuthenticationMethod = AuthenticationMethod.none
     """
-    Authentication method for logging into Sonarr.
+    Authentication method for logging into Lidarr.
     By default, do not require authentication.
 
     Values:
@@ -199,21 +199,21 @@ class SecurityGeneralSettings(GeneralSettings):
     * `basic` - Authentication using HTTP basic auth (browser popup)
     * `form` - Authentication using a login page
 
-    Requires a restart of Sonarr to take effect.
+    Requires a restart of Lidarr to take effect.
     """
 
     username: Optional[str] = None
     """
     Username for the administrator user. Required if authentication is enabled.
 
-    Requires a restart of Sonarr to take effect.
+    Requires a restart of Lidarr to take effect.
     """
 
     password: Optional[SecretStr] = None
     """
     Password for the administrator user. Required if authentication is enabled.
 
-    Requires a restart of Sonarr to take effect.
+    Requires a restart of Lidarr to take effect.
     """
 
     certificate_validation: CertificateValidation = CertificateValidation.enabled
@@ -239,7 +239,7 @@ class SecurityGeneralSettings(GeneralSettings):
                 # Due to the validator, gets set to `None` if authentication is disabled
                 # on the remote instance.
                 "decoder": lambda v: v or None,
-                # Sonarr isn't too picky about this, but replicate the behaviour of the UI.
+                # Lidarr isn't too picky about this, but replicate the behaviour of the UI.
                 "encoder": lambda v: v or "",
             },
         ),
@@ -252,7 +252,7 @@ class SecurityGeneralSettings(GeneralSettings):
                 # Due to the validator, gets set to `None` if authentication is disabled
                 # on the remote instance.
                 "decoder": lambda v: v or None,
-                # Sonarr isn't too picky about this, but replicate the behaviour of the UI.
+                # Lidarr isn't too picky about this, but replicate the behaviour of the UI.
                 "encoder": lambda v: v.get_secret_value() if v else "",
             },
         ),
@@ -262,7 +262,7 @@ class SecurityGeneralSettings(GeneralSettings):
 
 class ProxyGeneralSettings(GeneralSettings):
     """
-    Proxy configuration for Sonarr.
+    Proxy configuration for Lidarr.
     """
 
     enable: bool = False
@@ -354,10 +354,10 @@ class ProxyGeneralSettings(GeneralSettings):
 
 class LoggingGeneralSettings(GeneralSettings):
     """
-    Logging configuration for the Sonarr application.
+    Logging configuration for the Lidarr application.
     """
 
-    log_level: SonarrLogLevel = SonarrLogLevel.INFO
+    log_level: LidarrLogLevel = LidarrLogLevel.INFO
     """
     Verbosity of logging output.
 
@@ -373,18 +373,18 @@ class LoggingGeneralSettings(GeneralSettings):
 
 class AnalyticsGeneralSettings(GeneralSettings):
     """
-    Configuration of analytics and telemetry from within Sonarr.
+    Configuration of analytics and telemetry from within Lidarr.
     """
 
     send_anonymous_usage_data: bool = True
     """
-    Send anonymous usage and error information to Sonarr's servers.
+    Send anonymous usage and error information to Lidarr's servers.
 
-    This includes information on your browser, which Sonarr Web UI pages you use,
+    This includes information on your browser, which Lidarr Web UI pages you use,
     error reporting and OS/runtime versions. This information is reportedly used
     to prioritise features and bug fixes.
 
-    Requires a restart of Sonarr to take effect.
+    Requires a restart of Lidarr to take effect.
     """
 
     _remote_map: ClassVar[List[RemoteMapEntry]] = [
@@ -394,7 +394,7 @@ class AnalyticsGeneralSettings(GeneralSettings):
 
 class UpdatesGeneralSettings(GeneralSettings):
     """
-    Settings for updating Sonarr.
+    Settings for updating Lidarr.
     """
 
     branch: NonEmptyStr = "main"
@@ -402,7 +402,7 @@ class UpdatesGeneralSettings(GeneralSettings):
     Branch used by the external update mechanism.
     Changing this value has no effect on Docker installations.
 
-    If unsure, leave this undefined in Buildarr and use the value already set in Sonarr.
+    If unsure, leave this undefined in Buildarr and use the value already set in Lidarr.
     """
 
     automatic: bool = False
@@ -417,12 +417,12 @@ class UpdatesGeneralSettings(GeneralSettings):
     # script_path should be absolute only
     mechanism: UpdateMechanism = UpdateMechanism.docker
     """
-    Set the mechanism for updating Sonarr.
+    Set the mechanism for updating Lidarr.
     Must be set to `docker` on Docker installations.
 
     Values:
 
-    * `builtin` - Sonarr built-in updater mechanism
+    * `builtin` - Lidarr built-in updater mechanism
     * `script` - Use the configured update script
     * `external` - External update mechanism
     * `apt` - Debian APT package
@@ -452,14 +452,14 @@ class UpdatesGeneralSettings(GeneralSettings):
 
 class BackupGeneralSettings(GeneralSettings):
     """
-    Settings for Sonarr automatic backups.
+    Settings for Lidarr automatic backups.
     """
 
     folder: NonEmptyStr = "Backups"
     """
-    Folder to backup Sonarr data to.
+    Folder to backup Lidarr data to.
 
-    Relative paths will be under Sonarr's AppData directory.
+    Relative paths will be under Lidarr's AppData directory.
     """
 
     interval: Annotated[int, Field(ge=1, le=7)] = 7  # days
@@ -484,9 +484,9 @@ class BackupGeneralSettings(GeneralSettings):
     ]
 
 
-class SonarrGeneralSettingsConfig(SonarrConfigBase):
+class LidarrGeneralSettingsConfig(LidarrConfigBase):
     """
-    Sonarr general settings.
+    Lidarr general settings.
     """
 
     host: HostGeneralSettings = HostGeneralSettings()
@@ -498,7 +498,7 @@ class SonarrGeneralSettingsConfig(SonarrConfigBase):
     backup: BackupGeneralSettings = BackupGeneralSettings()
 
     @classmethod
-    def from_remote(cls, secrets: SonarrSecrets) -> Self:
+    def from_remote(cls, secrets: LidarrSecrets) -> Self:
         settings = api_get(secrets, "/api/v3/config/host")
         return cls(
             host=HostGeneralSettings._from_remote(settings),
@@ -513,7 +513,7 @@ class SonarrGeneralSettingsConfig(SonarrConfigBase):
     def update_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         remote: Self,
         check_unmanaged: bool = False,
     ) -> bool:

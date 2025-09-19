@@ -13,7 +13,7 @@
 
 
 """
-Sonarr plugin media management settings configuration.
+Lidarr plugin media management settings configuration.
 """
 
 from __future__ import annotations
@@ -27,8 +27,8 @@ from pydantic import Field, NonNegativeInt
 from typing_extensions import Annotated, Self
 
 from ..api import api_delete, api_get, api_post, api_put
-from ..secrets import SonarrSecrets
-from .types import SonarrConfigBase
+from ..secrets import LidarrSecrets
+from .types import LidarrConfigBase
 
 logger = getLogger(__name__)
 
@@ -111,12 +111,12 @@ class ChmodFolder(BaseEnum):
                 raise ValueError(f"Invalid {cls.__name__} name or value: {v}") from None
 
 
-class SonarrMediaManagementSettingsConfig(SonarrConfigBase):
+class LidarrMediaManagementSettingsConfig(LidarrConfigBase):
     """
     Naming, file management and root folder configuration.
 
     ```yaml
-    sonarr:
+    lidarr:
       settings:
         media_management:
           ...
@@ -124,8 +124,8 @@ class SonarrMediaManagementSettingsConfig(SonarrConfigBase):
 
     For more information on how to configure these options correctly,
     refer to these guides from
-    [WikiArr](https://wiki.servarr.com/sonarr/settings#media-management)
-    and [TRaSH-Guides](https://trash-guides.info/Sonarr/Sonarr-recommended-naming-scheme).
+    [WikiArr](https://wiki.servarr.com/lidarr/settings#media-management)
+    and [TRaSH-Guides](https://trash-guides.info/Lidarr/Lidarr-recommended-naming-scheme).
     """
 
     # Episode Naming
@@ -133,14 +133,14 @@ class SonarrMediaManagementSettingsConfig(SonarrConfigBase):
     """
     Rename imported files to the defined standard format.
 
-    Sonarr will use the existing file name if renaming is disabled.
+    Lidarr will use the existing file name if renaming is disabled.
     """
 
     replace_illegal_characters: bool = True
     """
     Replace illegal characters within the file name.
 
-    If set to `False`, Sonarr will remove them instead.
+    If set to `False`, Lidarr will remove them instead.
     """
 
     standard_episode_format: NonEmptyStr = (
@@ -158,7 +158,7 @@ class SonarrMediaManagementSettingsConfig(SonarrConfigBase):
     File renaming format for a standard episode file.
 
     The default specified here is the current TRaSH-Guides recommended format,
-    but it will not be applied to the Sonarr instance unless it is explicitly
+    but it will not be applied to the Lidarr instance unless it is explicitly
     defined in the configuration file.
     """
 
@@ -177,7 +177,7 @@ class SonarrMediaManagementSettingsConfig(SonarrConfigBase):
     File renaming format for a daily episode file.
 
     The default specified here is the current TRaSH-Guides recommended format,
-    but it will not be applied to the Sonarr instance unless it is explicitly
+    but it will not be applied to the Lidarr instance unless it is explicitly
     defined in the configuration file.
     """
 
@@ -198,7 +198,7 @@ class SonarrMediaManagementSettingsConfig(SonarrConfigBase):
     File renaming format for an anime episode file.
 
     The default specified here is the current TRaSH-Guides recommended format,
-    but it will not be applied to the Sonarr instance unless it is explicitly
+    but it will not be applied to the Lidarr instance unless it is explicitly
     defined in the configuration file.
     """
 
@@ -207,7 +207,7 @@ class SonarrMediaManagementSettingsConfig(SonarrConfigBase):
     Renaming format for a series folder.
 
     The default specified here is the current TRaSH-Guides recommended format,
-    but it will not be applied to the Sonarr instance unless it is explicitly
+    but it will not be applied to the Lidarr instance unless it is explicitly
     defined in the configuration file.
     """
 
@@ -216,7 +216,7 @@ class SonarrMediaManagementSettingsConfig(SonarrConfigBase):
     Renaming format for a season folder of a series.
 
     The default specified here is the current TRaSH-Guides recommended format,
-    but it will not be applied to the Sonarr instance unless it is explicitly
+    but it will not be applied to the Lidarr instance unless it is explicitly
     defined in the configuration file.
     """
 
@@ -225,7 +225,7 @@ class SonarrMediaManagementSettingsConfig(SonarrConfigBase):
     Renaming format for a specials folder of a series.
 
     The default specified here is the current TRaSH-Guides recommended format,
-    but it will not be applied to the Sonarr instance unless it is explicitly
+    but it will not be applied to the Lidarr instance unless it is explicitly
     defined in the configuration file.
     """
 
@@ -259,7 +259,7 @@ class SonarrMediaManagementSettingsConfig(SonarrConfigBase):
     * `never`
 
     ```yaml
-    sonarr:
+    lidarr:
       settings:
         media_management:
           episode_title_required: "always"
@@ -270,7 +270,7 @@ class SonarrMediaManagementSettingsConfig(SonarrConfigBase):
     """
     Skip the free space check for the series root folder.
 
-    Only enable when Sonarr is unable to detect free space from your series root folder.
+    Only enable when Lidarr is unable to detect free space from your series root folder.
     """
 
     minimum_free_space: Annotated[int, Field(ge=100)] = 100  # MB
@@ -286,7 +286,7 @@ class SonarrMediaManagementSettingsConfig(SonarrConfigBase):
     Use hard links when trying to copy files from torrents that are still being seeded.
 
     Occasionally, file locks may prevent renaming files that are being seeded.
-    You may temporarily disable seeding and use Sonarr's rename function as a work around.
+    You may temporarily disable seeding and use Lidarr's rename function as a work around.
     """
 
     import_extra_files: bool = False
@@ -297,7 +297,7 @@ class SonarrMediaManagementSettingsConfig(SonarrConfigBase):
     # File Management
     unmonitor_deleted_episodes: bool = False
     """
-    Episodes deleted from disk are automatically unmonitored in Sonarr.
+    Episodes deleted from disk are automatically unmonitored in Lidarr.
     """
 
     propers_and_repacks: PropersAndRepacks = PropersAndRepacks.do_not_prefer
@@ -311,7 +311,7 @@ class SonarrMediaManagementSettingsConfig(SonarrConfigBase):
     * `do-not-prefer`
 
     ```yaml
-    sonarr:
+    lidarr:
       settings:
         media_management:
           propers_and_repacks: "do-not-prefer"
@@ -326,7 +326,7 @@ class SonarrMediaManagementSettingsConfig(SonarrConfigBase):
     Extract video information such as resolution, runtime and codec information
     from files.
 
-    This requires Sonarr to read parts of the file, which may cause high disk
+    This requires Lidarr to read parts of the file, which may cause high disk
     or network activity during scans.
     """
 
@@ -343,13 +343,13 @@ class SonarrMediaManagementSettingsConfig(SonarrConfigBase):
     * `never`
 
     ```yaml
-    sonarr:
+    lidarr:
       settings:
         media_management:
           rescan_series_folder_after_refresh: "always"
     ```
 
-    NOTE: Sonarr will not automatically detect changes to files
+    NOTE: Lidarr will not automatically detect changes to files
     if this option is not set to `always`.
     """
 
@@ -364,7 +364,7 @@ class SonarrMediaManagementSettingsConfig(SonarrConfigBase):
     * `utc-air-date`
 
     ```yaml
-    sonarr:
+    lidarr:
       settings:
         media_management:
           change_file_date: "none"
@@ -398,7 +398,7 @@ class SonarrMediaManagementSettingsConfig(SonarrConfigBase):
     Permissions to set on media folders and files during import/rename.
     File permissions are set without execute bits.
 
-    This only works if the user running Sonarr is the owner of the file.
+    This only works if the user running Lidarr is the owner of the file.
     It's better to ensure the download client sets the permissions properly.
 
     Values:
@@ -410,7 +410,7 @@ class SonarrMediaManagementSettingsConfig(SonarrConfigBase):
     * `drwxrwxrwx`/`777`
 
     ```yaml
-    sonarr:
+    lidarr:
       settings:
         media_management:
           chmod_folder: "drwxr-xr-x"
@@ -421,17 +421,17 @@ class SonarrMediaManagementSettingsConfig(SonarrConfigBase):
     """
     Group name or gid. Use gid for remote file systems.
 
-    This only works if the user running Sonarr is the owner of the file.
-    It's better to ensure the download client uses the same group as Sonarr.
+    This only works if the user running Lidarr is the owner of the file.
+    It's better to ensure the download client uses the same group as Lidarr.
     """
 
     root_folders: Set[NonEmptyStr] = set()
     """
     This allows you to create a root path for a place to either
-    place new imported downloads, or to allow Sonarr to scan existing media.
+    place new imported downloads, or to allow Lidarr to scan existing media.
 
     ```yaml
-    sonarr:
+    lidarr:
       settings:
         media_management:
           root_folders:
@@ -441,12 +441,12 @@ class SonarrMediaManagementSettingsConfig(SonarrConfigBase):
 
     delete_unmanaged_root_folders: bool = False
     """
-    Delete root folder definitions from Sonarr if they are not
+    Delete root folder definitions from Lidarr if they are not
     explicitly defined in Buildarr.
 
     Before enabling this option, ensure all the root folders
-    you want Sonarr to scan are defined in Buildarr,
-    as Sonarr might remove imported media from its database
+    you want Lidarr to scan are defined in Buildarr,
+    as Lidarr might remove imported media from its database
     when root folder definitions are deleted.
 
     *New in version 0.1.2.*
@@ -497,7 +497,7 @@ class SonarrMediaManagementSettingsConfig(SonarrConfigBase):
     ]
 
     @classmethod
-    def from_remote(cls, secrets: SonarrSecrets) -> Self:
+    def from_remote(cls, secrets: LidarrSecrets) -> Self:
         return cls(
             # Episode Naming
             **cls.get_local_attrs(
@@ -518,7 +518,7 @@ class SonarrMediaManagementSettingsConfig(SonarrConfigBase):
     def update_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         remote: Self,
         check_unmanaged: bool = False,
     ) -> bool:
@@ -551,7 +551,7 @@ class SonarrMediaManagementSettingsConfig(SonarrConfigBase):
     def _update_remote_naming(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         remote: Self,
         check_unmanaged: bool = False,
     ) -> bool:
@@ -575,7 +575,7 @@ class SonarrMediaManagementSettingsConfig(SonarrConfigBase):
     def _update_remote_mediamanagement(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         remote: Self,
         check_unmanaged: bool = False,
     ) -> bool:
@@ -599,7 +599,7 @@ class SonarrMediaManagementSettingsConfig(SonarrConfigBase):
     def _update_remote_rootfolder(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         remote: Self,
         check_unmanaged: bool = False,
     ) -> bool:
@@ -616,14 +616,14 @@ class SonarrMediaManagementSettingsConfig(SonarrConfigBase):
                 changed = True
         return changed
 
-    def delete_remote(self, tree: str, secrets: SonarrSecrets, remote: Self) -> bool:
+    def delete_remote(self, tree: str, secrets: LidarrSecrets, remote: Self) -> bool:
         return self._delete_remote_rootfolder(
             tree=f"{tree}.root_folders",
             secrets=secrets,
             remote=remote,
         )
 
-    def _delete_remote_rootfolder(self, tree: str, secrets: SonarrSecrets, remote: Self) -> bool:
+    def _delete_remote_rootfolder(self, tree: str, secrets: LidarrSecrets, remote: Self) -> bool:
         changed = False
         current_root_folders: Dict[str, int] = {
             rf["path"]: rf["id"] for rf in api_get(secrets, "/api/v3/rootfolder")

@@ -13,7 +13,7 @@
 
 
 """
-Sonarr plugin configuration utility classes and functions.
+Lidarr plugin configuration utility classes and functions.
 """
 
 from __future__ import annotations

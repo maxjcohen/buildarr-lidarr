@@ -13,16 +13,16 @@
 
 
 """
-Sonarr plugin manager class.
+Lidarr plugin manager class.
 """
 
 from __future__ import annotations
 
 from buildarr.manager import ManagerPlugin
 
-from .config import SonarrInstanceConfig
-from .secrets import SonarrSecrets
+from .config import LidarrInstanceConfig
+from .secrets import LidarrSecrets
 
 
-class SonarrManager(ManagerPlugin[SonarrInstanceConfig, SonarrSecrets]):
+class LidarrManager(ManagerPlugin[LidarrInstanceConfig, LidarrSecrets]):
     pass

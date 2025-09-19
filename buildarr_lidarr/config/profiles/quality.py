@@ -13,7 +13,7 @@
 
 
 """
-Sonarr plugin quality profile configuration.
+Lidarr plugin quality profile configuration.
 """
 
 from __future__ import annotations
@@ -27,13 +27,13 @@ from pydantic import Field, ValidationInfo, field_validator
 from typing_extensions import Annotated, Self
 
 from ...api import api_delete, api_get, api_post, api_put
-from ...secrets import SonarrSecrets
-from ..types import SonarrConfigBase
+from ...secrets import LidarrSecrets
+from ..types import LidarrConfigBase
 
 logger = getLogger(__name__)
 
 
-class QualityGroup(SonarrConfigBase):
+class QualityGroup(LidarrConfigBase):
     """
     Quality group.
 
@@ -54,7 +54,7 @@ class QualityGroup(SonarrConfigBase):
         }
 
 
-class QualityProfile(SonarrConfigBase):
+class QualityProfile(LidarrConfigBase):
     """
     The main things to consider when creating a quality profile are
     what quality settings to enable, and how to prioritise each.
@@ -79,14 +79,14 @@ class QualityProfile(SonarrConfigBase):
     subsequent qualities given lower priority. Qualities not explicitly defined are
     disabled (not downloaded).
 
-    Sonarr supports grouping multiple qualities together to give them the same priority.
+    Lidarr supports grouping multiple qualities together to give them the same priority.
     In Buildarr, these are expressed by giving a `name` to the group, and listing the qualities
     under the `members` attribute.
 
     For more insight into reasonable values for quality profiles,
-    refer to these guides from [WikiArr](https://wiki.servarr.com/sonarr/settings#quality-profiles)
-    and TRaSH-Guides ([WEB-DL](https://trash-guides.info/Sonarr/Sonarr-Release-Profile-RegEx/),
-    [anime](https://trash-guides.info/Sonarr/Sonarr-Release-Profile-RegEx-Anime/)).
+    refer to these guides from [WikiArr](https://wiki.servarr.com/lidarr/settings#quality-profiles)
+    and TRaSH-Guides ([WEB-DL](https://trash-guides.info/Lidarr/Lidarr-Release-Profile-RegEx/),
+    [anime](https://trash-guides.info/Lidarr/Lidarr-Release-Profile-RegEx-Anime/)).
     """
 
     upgrades_allowed: bool = False
@@ -125,7 +125,7 @@ class QualityProfile(SonarrConfigBase):
     The maximum quality level to upgrade an episode to.
     For a quality group, specify the group name.
 
-    Once this quality is reached Sonarr will no longer download episodes.
+    Once this quality is reached Lidarr will no longer download episodes.
 
     This attribute is required if `upgrades_allowed` is set to `True`.
     """
@@ -238,7 +238,7 @@ class QualityProfile(SonarrConfigBase):
             if quality["id"] == cutoff:
                 return quality["name"]
         raise RuntimeError(
-            "Inconsistent Sonarr instance state: "
+            "Inconsistent Lidarr instance state: "
             f"'cutoff' quality ID {cutoff} not found in 'items': {items}",
         )
 
@@ -270,7 +270,7 @@ class QualityProfile(SonarrConfigBase):
     def _create_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         profile_name: str,
         quality_definitions: Mapping[str, Mapping[str, Any]],
     ) -> None:
@@ -296,7 +296,7 @@ class QualityProfile(SonarrConfigBase):
     def _update_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         remote: Self,
         profile_id: int,
         profile_name: str,
@@ -325,11 +325,11 @@ class QualityProfile(SonarrConfigBase):
             return True
         return False
 
-    def _delete_remote(self, secrets: SonarrSecrets, profile_id: int) -> None:
+    def _delete_remote(self, secrets: LidarrSecrets, profile_id: int) -> None:
         api_delete(secrets, f"/api/v3/qualityprofile/{profile_id}")
 
 
-class SonarrQualityProfilesSettingsConfig(SonarrConfigBase):
+class LidarrQualityProfilesSettingsConfig(LidarrConfigBase):
     """
     Configuration parameters for controlling how Buildarr handles quality profiles.
     """
@@ -338,13 +338,13 @@ class SonarrQualityProfilesSettingsConfig(SonarrConfigBase):
     """
     Automatically delete quality profiles not defined in Buildarr.
 
-    Out of the box Sonarr provides some pre-defined quality profiles.
+    Out of the box Lidarr provides some pre-defined quality profiles.
     Take care when enabling this option, as those will also be deleted.
     """
 
     definitions: Dict[str, QualityProfile] = {}
     """
-    Define quality profiles to configure on Sonarr here.
+    Define quality profiles to configure on Lidarr here.
 
     If there are no quality profiles defined and `delete_unmanaged` is `False`,
     Buildarr will not modify existing quality profiles, but if `delete_unmanaged` is `True`,
@@ -352,7 +352,7 @@ class SonarrQualityProfilesSettingsConfig(SonarrConfigBase):
     """
 
     @classmethod
-    def from_remote(cls, secrets: SonarrSecrets) -> Self:
+    def from_remote(cls, secrets: LidarrSecrets) -> Self:
         return cls(
             definitions={
                 profile["name"]: QualityProfile._from_remote(profile)
@@ -363,7 +363,7 @@ class SonarrQualityProfilesSettingsConfig(SonarrConfigBase):
     def update_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         remote: Self,
         check_unmanaged: bool = False,
     ) -> bool:
@@ -401,7 +401,7 @@ class SonarrQualityProfilesSettingsConfig(SonarrConfigBase):
                 changed = True
         return changed
 
-    def delete_remote(self, tree: str, secrets: SonarrSecrets, remote: Self) -> bool:
+    def delete_remote(self, tree: str, secrets: LidarrSecrets, remote: Self) -> bool:
         changed = False
         profile_ids: Dict[str, int] = {
             profile_json["name"]: profile_json["id"]

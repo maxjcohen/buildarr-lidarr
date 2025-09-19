@@ -13,7 +13,7 @@
 
 
 """
-Sonarr plugin CLI commands.
+Lidarr plugin CLI commands.
 """
 
 from __future__ import annotations
@@ -26,9 +26,9 @@ from urllib.parse import urlparse
 
 import click
 
-from .config import SonarrInstanceConfig
-from .manager import SonarrManager
-from .secrets import SonarrSecrets
+from .config import LidarrInstanceConfig
+from .manager import LidarrManager
+from .secrets import LidarrSecrets
 
 if TYPE_CHECKING:
     from urllib.parse import ParseResult as Url
@@ -36,18 +36,18 @@ if TYPE_CHECKING:
 HOSTNAME_PORT_TUPLE_LENGTH = 2
 
 
-@click.group(help="Sonarr instance ad-hoc commands.")
-def sonarr():
+@click.group(help="Lidarr instance ad-hoc commands.")
+def lidarr():
     """
-    Sonarr instance ad-hoc commands.
+    Lidarr instance ad-hoc commands.
     """
 
     pass
 
 
-@sonarr.command(
+@lidarr.command(
     help=(
-        "Dump configuration from a remote Sonarr instance.\n\n"
+        "Dump configuration from a remote Lidarr instance.\n\n"
         "The configuration is dumped to standard output in Buildarr-compatible YAML format."
     ),
 )
@@ -59,13 +59,13 @@ def sonarr():
     metavar="API-KEY",
     default=functools.partial(
         getpass,
-        "Sonarr instance API key (or leave blank to auto-fetch): ",
+        "Lidarr instance API key (or leave blank to auto-fetch): ",
     ),
-    help="API key of the Sonarr instance. The user will be prompted if undefined.",
+    help="API key of the Lidarr instance. The user will be prompted if undefined.",
 )
 def dump_config(url: Url, api_key: str) -> int:
     """
-    Dump configuration from a remote Sonarr instance.
+    Dump configuration from a remote Lidarr instance.
     The configuration is dumped to standard output in Buildarr-compatible YAML format.
     """
 
@@ -79,7 +79,7 @@ def dump_config(url: Url, api_key: str) -> int:
     )
     url_base = url.path
 
-    instance_config = SonarrInstanceConfig(
+    instance_config = LidarrInstanceConfig(
         hostname=hostname,
         port=port,
         protocol=protocol,  # type: ignore[arg-type]
@@ -88,10 +88,10 @@ def dump_config(url: Url, api_key: str) -> int:
 
     click.echo(
         (
-            SonarrManager()
+            LidarrManager()
             .from_remote(
                 instance_config=instance_config,
-                secrets=SonarrSecrets.get_from_url(
+                secrets=LidarrSecrets.get_from_url(
                     hostname=hostname,
                     port=port,
                     protocol=protocol,

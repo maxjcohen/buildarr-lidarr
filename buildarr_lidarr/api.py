@@ -13,7 +13,7 @@
 
 
 """
-Sonarr plugin API functions.
+Lidarr plugin API functions.
 """
 
 from __future__ import annotations
@@ -29,26 +29,26 @@ import requests
 
 from buildarr.state import state
 
-from .exceptions import SonarrAPIError
+from .exceptions import LidarrAPIError
 
 if TYPE_CHECKING:
     from typing import Any, Dict, Optional, Union
 
-    from .secrets import SonarrSecrets
+    from .secrets import LidarrSecrets
 
 
 logger = getLogger(__name__)
 
-INITIALIZE_JS_RES_PATTERN = re.compile(r"(?s)^window\.Sonarr = ({.*});$")
+INITIALIZE_JS_RES_PATTERN = re.compile(r"(?s)^window\.Lidarr = ({.*});$")
 
 
 def get_initialize_js(host_url: str, api_key: Optional[str] = None) -> Dict[str, Any]:
     """
-    Get the Sonarr session initialisation metadata, including the API key.
+    Get the Lidarr session initialisation metadata, including the API key.
 
     Args:
-        host_url (str): Sonarr instance URL.
-        api_key (str): Sonarr instance API key, if required. Defaults to `None`.
+        host_url (str): Lidarr instance URL.
+        api_key (str): Lidarr instance API key, if required. Defaults to `None`.
 
     Returns:
         Session initialisation metadata
@@ -73,14 +73,14 @@ def get_initialize_js(host_url: str, api_key: Optional[str] = None) -> Dict[str,
         else:
             status_code = res.status_code
             error_message = f"Unexpected response with error code {res.status_code}: {res.text}"
-        raise SonarrAPIError(
+        raise LidarrAPIError(
             f"Unable to retrieve '{url}': {error_message}",
             status_code=status_code,
         )
 
     res_match = re.match(INITIALIZE_JS_RES_PATTERN, res.text)
     if not res_match:
-        raise SonarrAPIError(
+        raise LidarrAPIError(
             f"No matches for 'initialize.js' parsing: {res.text}",
             status_code=res.status_code,
         )
@@ -92,7 +92,7 @@ def get_initialize_js(host_url: str, api_key: Optional[str] = None) -> Dict[str,
 
 
 def api_get(
-    secrets: Union[SonarrSecrets, str],
+    secrets: Union[LidarrSecrets, str],
     api_url: str,
     *,
     api_key: Optional[str] = None,
@@ -104,7 +104,7 @@ def api_get(
     Send an API `GET` request.
 
     Args:
-        secrets (Union[SonarrSecrets, str]): Secrets metadata, or host URL.
+        secrets (Union[LidarrSecrets, str]): Secrets metadata, or host URL.
         api_url (str): API command.
         expected_status_code (HTTPStatus): Expected response status. Defaults to `200 OK`.
 
@@ -147,7 +147,7 @@ def api_get(
 
 
 def api_post(
-    secrets: Union[SonarrSecrets, str],
+    secrets: Union[LidarrSecrets, str],
     api_url: str,
     req: Any = None,
     session: Optional[requests.Session] = None,
@@ -155,11 +155,11 @@ def api_post(
     expected_status_code: HTTPStatus = HTTPStatus.CREATED,
 ) -> Any:
     """
-    Send a `POST` request to a Sonarr instance.
+    Send a `POST` request to a Lidarr instance.
 
     Args:
-        secrets (Union[SonarrSecrets, str]): Sonarr secrets metadata, or host URL.
-        api_url (str): Sonarr API command.
+        secrets (Union[LidarrSecrets, str]): Lidarr secrets metadata, or host URL.
+        api_url (str): Lidarr API command.
         req (Any): Request (JSON-serialisable).
         expected_status_code (HTTPStatus): Expected response status. Defaults to `201 Created`.
 
@@ -199,7 +199,7 @@ def api_post(
 
 
 def api_put(
-    secrets: Union[SonarrSecrets, str],
+    secrets: Union[LidarrSecrets, str],
     api_url: str,
     req: Any,
     session: Optional[requests.Session] = None,
@@ -207,11 +207,11 @@ def api_put(
     expected_status_code: HTTPStatus = HTTPStatus.ACCEPTED,
 ) -> Any:
     """
-    Send a `PUT` request to a Sonarr instance.
+    Send a `PUT` request to a Lidarr instance.
 
     Args:
-        secrets (Union[SonarrSecrets, str]): Sonarr secrets metadata, or host URL.
-        api_url (str): Sonarr API command.
+        secrets (Union[LidarrSecrets, str]): Lidarr secrets metadata, or host URL.
+        api_url (str): Lidarr API command.
         req (Any): Request (JSON-serialisable).
         expected_status_code (HTTPStatus): Expected response status. Defaults to `200 OK`.
 
@@ -251,18 +251,18 @@ def api_put(
 
 
 def api_delete(
-    secrets: Union[SonarrSecrets, str],
+    secrets: Union[LidarrSecrets, str],
     api_url: str,
     session: Optional[requests.Session] = None,
     use_api_key: bool = True,
     expected_status_code: HTTPStatus = HTTPStatus.OK,
 ) -> None:
     """
-    Send a `DELETE` request to a Sonarr instance.
+    Send a `DELETE` request to a Lidarr instance.
 
     Args:
-        secrets (Union[SonarrSecrets, str]): Sonarr secrets metadata, or host URL.
-        api_url (str): Sonarr API command.
+        secrets (Union[LidarrSecrets, str]): Lidarr secrets metadata, or host URL.
+        api_url (str): Lidarr API command.
         expected_status_code (HTTPStatus): Expected response status. Defaults to `200 OK`.
     """
 
@@ -297,7 +297,7 @@ def api_error(
     parse_response: bool = True,
 ) -> None:
     """
-    Process an error response from the Sonarr API.
+    Process an error response from the Lidarr API.
 
     Args:
         method (str): HTTP method.
@@ -306,7 +306,7 @@ def api_error(
         parse_response (bool, optional): Parse response error JSON. Defaults to True.
 
     Raises:
-        Sonarr API exception
+        Lidarr API exception
     """
 
     error_message = (
@@ -321,7 +321,7 @@ def api_error(
                 error_message += f"\n{_api_error(error)}"
         except KeyError:
             error_message += f" {res_json}"
-    raise SonarrAPIError(error_message, status_code=response.status_code) from None
+    raise LidarrAPIError(error_message, status_code=response.status_code) from None
 
 
 def _api_error(res_json: Any) -> str:

@@ -13,7 +13,7 @@
 
 
 """
-Sonarr plugin language profile configuration.
+Lidarr plugin language profile configuration.
 """
 
 from __future__ import annotations
@@ -27,8 +27,8 @@ from pydantic import Field, ValidationInfo, field_validator
 from typing_extensions import Annotated, Self
 
 from ...api import api_delete, api_get, api_post, api_put
-from ...secrets import SonarrSecrets
-from ..types import SonarrConfigBase
+from ...secrets import LidarrSecrets
+from ..types import LidarrConfigBase
 
 logger = getLogger(__name__)
 
@@ -102,7 +102,7 @@ class Language(BaseEnum):
     vietnamese = "Vietnamese"
 
 
-class LanguageProfile(SonarrConfigBase):
+class LanguageProfile(LidarrConfigBase):
     """
     A language profile is defined under the `language_profiles` block as shown below.
 
@@ -267,7 +267,7 @@ class LanguageProfile(SonarrConfigBase):
     def _create_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         profile_name: str,
         language_ids: Mapping[Language, int],
     ) -> None:
@@ -283,7 +283,7 @@ class LanguageProfile(SonarrConfigBase):
     def _update_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         remote: LanguageProfile,
         profile_id: int,
         profile_name: str,
@@ -305,11 +305,11 @@ class LanguageProfile(SonarrConfigBase):
             return True
         return False
 
-    def _delete_remote(self, secrets: SonarrSecrets, profile_id: int) -> None:
+    def _delete_remote(self, secrets: LidarrSecrets, profile_id: int) -> None:
         api_delete(secrets, f"/api/v3/languageprofile/{profile_id}")
 
 
-class SonarrLanguageProfilesSettingsConfig(SonarrConfigBase):
+class LidarrLanguageProfilesSettingsConfig(LidarrConfigBase):
     """
     Configuration parameters for controlling how Buildarr handles language profiles.
     """
@@ -321,7 +321,7 @@ class SonarrLanguageProfilesSettingsConfig(SonarrConfigBase):
 
     definitions: Dict[str, LanguageProfile] = {}
     """
-    Define language profiles to configure on Sonarr here.
+    Define language profiles to configure on Lidarr here.
 
     If there are no language profiles defined and `delete_unmanaged` is `False`,
     Buildarr will not modify existing language profiles, but if `delete_unmanaged` is `True`,
@@ -329,7 +329,7 @@ class SonarrLanguageProfilesSettingsConfig(SonarrConfigBase):
     """
 
     @classmethod
-    def from_remote(cls, secrets: SonarrSecrets) -> Self:
+    def from_remote(cls, secrets: LidarrSecrets) -> Self:
         language_ids = {
             Language(language["language"]["name"]): language["language"]["id"]
             for language in api_get(secrets, "/api/v3/languageprofile/schema")["languages"]
@@ -344,7 +344,7 @@ class SonarrLanguageProfilesSettingsConfig(SonarrConfigBase):
     def update_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         remote: Self,
         check_unmanaged: bool = False,
     ) -> bool:
@@ -357,14 +357,14 @@ class SonarrLanguageProfilesSettingsConfig(SonarrConfigBase):
             Language(language["language"]["name"]): language["language"]["id"]
             for language in api_get(secrets, "/api/v3/languageprofile/schema")["languages"]
         }
-        # # Only works on Sonarr V4
+        # # Only works on Lidarr V4
         # try:
         #     language_ids: Dict[Language, int] = {
         #         Language(language["name"]): language["id"]
         #         for language in api_get(secrets, "/api/v3/language")
         #     }
-        # # Compatible with Sonarr V3, deprecated on Sonarr V4
-        # except SonarrAPIError as err:
+        # # Compatible with Lidarr V3, deprecated on Lidarr V4
+        # except LidarrAPIError as err:
         #     if err.response.status_code == 404:
         #         ...
         #     else:
@@ -390,7 +390,7 @@ class SonarrLanguageProfilesSettingsConfig(SonarrConfigBase):
                 changed = True
         return changed
 
-    def delete_remote(self, tree: str, secrets: SonarrSecrets, remote: Self) -> bool:
+    def delete_remote(self, tree: str, secrets: LidarrSecrets, remote: Self) -> bool:
         changed = False
         profile_ids: Dict[str, int] = {
             profile_json["name"]: profile_json["id"]

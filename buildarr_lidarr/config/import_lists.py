@@ -13,7 +13,7 @@
 
 
 """
-Sonarr plugin import list settings configuration.
+Lidarr plugin import list settings configuration.
 """
 
 from __future__ import annotations
@@ -51,9 +51,9 @@ from pydantic import (
 from typing_extensions import Annotated, Self
 
 from ..api import api_delete, api_get, api_post, api_put
-from ..secrets import SonarrSecrets
-from ..types import SonarrApiKey
-from .types import SonarrConfigBase
+from ..secrets import LidarrSecrets
+from ..types import LidarrApiKey
+from .types import LidarrConfigBase
 from .util import trakt_expires_encoder
 
 logger = getLogger(__name__)
@@ -112,22 +112,22 @@ class TraktUserListType(BaseEnum):
     user_collection_list = 2
 
 
-class ImportList(SonarrConfigBase):
+class ImportList(LidarrConfigBase):
     """
     For more information on how an import list should be setup,
-    refer to this guide on [WikiArr](https://wiki.servarr.com/en/sonarr/settings#import-lists).
+    refer to this guide on [WikiArr](https://wiki.servarr.com/en/lidarr/settings#import-lists).
 
     All import list types can have the following attributes configured.
     """
 
     enable_automatic_add: bool = True
     """
-    Automatically add series to Sonarr upon syncing.
+    Automatically add series to Lidarr upon syncing.
     """
 
     monitor: Monitor = Monitor.all_episodes
     """
-    Define how Sonarr should monitor existing and new episodes of series.
+    Define how Lidarr should monitor existing and new episodes of series.
 
     Values:
 
@@ -165,7 +165,7 @@ class ImportList(SonarrConfigBase):
     series_type: SeriesType = SeriesType.standard
     """
     The type of series that get imported from this import list.
-    This option affects how Sonarr handles the media, such as renaming.
+    This option affects how Lidarr handles the media, such as renaming.
 
     Values:
 
@@ -258,7 +258,7 @@ class ImportList(SonarrConfigBase):
         remote_attrs: Mapping[str, Any],
     ) -> Self:
         """
-        Parse an import list object from the remote Sonarr instance,
+        Parse an import list object from the remote Lidarr instance,
         and return its internal representation.
 
         Args:
@@ -308,7 +308,7 @@ class ImportList(SonarrConfigBase):
         Resolve this import list using instance references from the given object,
         and return an object with fully qualified attribute values.
 
-        Used to fully qualify import list objects read from a remote Sonarr instance,
+        Used to fully qualify import list objects read from a remote Lidarr instance,
         using its corresponding local configuration.
 
         Args:
@@ -324,18 +324,18 @@ class ImportList(SonarrConfigBase):
     def _create_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         quality_profile_ids: Mapping[str, int],
         language_profile_ids: Mapping[str, int],
         tag_ids: Mapping[str, int],
         importlist_name: str,
     ) -> None:
         """
-        Create this import list on the remote Sonarr instance.
+        Create this import list on the remote Lidarr instance.
 
         Args:
             tree (str): Configuration tree. Used for logging.
-            secrets (SonarrSecrets): Secrets metadata for the remote instance.
+            secrets (LidarrSecrets): Secrets metadata for the remote instance.
             quality_profile_ids (Mapping[str, int]): Quality profile ID mapping on the remote.
             language_profile_ids (Mapping[str, int]): Language profile ID mapping on the remote.
             tag_ids (Mapping[str, int]): Tag ID mapping on the remote.
@@ -366,7 +366,7 @@ class ImportList(SonarrConfigBase):
     def _update_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         remote: Self,
         quality_profile_ids: Mapping[str, int],
         language_profile_ids: Mapping[str, int],
@@ -375,12 +375,12 @@ class ImportList(SonarrConfigBase):
         importlist_name: str,
     ) -> bool:
         """
-        Compare this import list to the currently active one the remote Sonarr instance,
+        Compare this import list to the currently active one the remote Lidarr instance,
         and update it in-place if there are differences.
 
         Args:
             tree (str): Configuration tree. Used for logging.
-            secrets (SonarrSecrets): Secrets metadata for the remote instance.
+            secrets (LidarrSecrets): Secrets metadata for the remote instance.
             remote (Self): Active import list confiuration on the remote instance.
             quality_profile_ids (Mapping[str, int]): Quality profile ID mapping on the remote.
             language_profile_ids (Mapping[str, int]): Language profile ID mapping on the remote.
@@ -415,13 +415,13 @@ class ImportList(SonarrConfigBase):
             return True
         return False
 
-    def _delete_remote(self, secrets: SonarrSecrets, importlist_id: int) -> None:
+    def _delete_remote(self, secrets: LidarrSecrets, importlist_id: int) -> None:
         """
-        Delete this import list from the remote Sonarr instance.
+        Delete this import list from the remote Lidarr instance.
 
         Args:
             tree (str): Configuration tree. Used for logging.
-            secrets (SonarrSecrets): Secrets metadata for the remote instance.
+            secrets (LidarrSecrets): Secrets metadata for the remote instance.
             importlist_id (int): ID associated with this import list on the remote instance.
         """
         api_delete(secrets, f"/api/v3/importlist/{importlist_id}")
@@ -449,13 +449,13 @@ class TraktImportList(ImportList):
 
     !!! note
 
-        Sonarr directly authenticates with Trakt to generate tokens for it to use.
+        Lidarr directly authenticates with Trakt to generate tokens for it to use.
         At the moment, the easiest way to generate the tokens for Buildarr
-        is to do it using the GUI within Sonarr, and use the following
+        is to do it using the GUI within Lidarr, and use the following
         shell command to retrieve the generated configuration.
 
         ```bash
-        $ curl -X "GET" "<sonarr-url>/api/v3/notification" -H "X-Api-Key: <api-key>"
+        $ curl -X "GET" "<lidarr-url>/api/v3/notification" -H "X-Api-Key: <api-key>"
         ```
 
     The following parameters are common to all Trakt import list types.
@@ -469,12 +469,12 @@ class TraktImportList(ImportList):
 
     access_token: Password
     """
-    Access token for Sonarr from Trakt.
+    Access token for Lidarr from Trakt.
     """
 
     refresh_token: Password
     """
-    Refresh token for Sonarr from Trakt.
+    Refresh token for Lidarr from Trakt.
     """
 
     expires: datetime
@@ -560,25 +560,25 @@ class TraktImportList(ImportList):
         ]
 
 
-class SonarrImportList(ProgramImportList):
+class LidarrImportList(ProgramImportList):
     """
-    Import items from another Sonarr instance.
+    Import items from another Lidarr instance.
 
-    The linked Sonarr instance must be the same major version as this defined Sonarr instance.
-    For example, a Sonarr V3 instance cannot connect with a Sonarr V4 instance, and vice versa.
+    The linked Lidarr instance must be the same major version as this defined Lidarr instance.
+    For example, a Lidarr V3 instance cannot connect with a Lidarr V4 instance, and vice versa.
 
     ```yaml
     ...
       import_lists:
         definitions:
-          Sonarr:
-            type: "sonarr"
+          Lidarr:
+            type: "lidarr"
             # Global import list options.
             root_folder: "/path/to/videos"
             quality_profile: "HD/SD"
             language_profile: "English"
-            # Sonarr import list-specific options.
-            full_url: "http://sonarr:8989"
+            # Lidarr import list-specific options.
+            full_url: "http://lidarr:8989"
             api_key: "1a2b3c4d5e1a2b3c4d5e1a2b3c4d5e1a"
             source_quality_profiles:
               - 11
@@ -591,37 +591,37 @@ class SonarrImportList(ProgramImportList):
               ...
     ```
 
-    This import list supports instance references to another Buildarr-defined Sonarr instance
+    This import list supports instance references to another Buildarr-defined Lidarr instance
     using `instance_name`.
 
     In this mode, you can specify `instance_name` in place of `api_key`,
     and use actual names for the source language profiles, quality profiles and tags,
     instead of IDs which are subject to change.
 
-    Here is an example of one Sonarr instance (`sonarr-4k`) referencing
-    another instance (`sonarr-hd`), using it as an import list.
+    Here is an example of one Lidarr instance (`lidarr-4k`) referencing
+    another instance (`lidarr-hd`), using it as an import list.
 
     ```yaml
-    sonarr:
+    lidarr:
       instances:
-        sonarr-hd:
+        lidarr-hd:
           hostname: "localhost"
           port: 8989
-        sonarr-4k:
+        lidarr-4k:
           hostname: "localhost"
           port: 8990
           settings:
             import_lists:
               definitions:
-                Sonarr (HD):
-                  type: "sonarr"
+                Lidarr (HD):
+                  type: "lidarr"
                   # Global import list options.
                   root_folder: "/path/to/videos"
                   quality_profile: "4K"
                   language_profile: "English"
-                  # Sonarr import list-specific options.
-                  full_url: "http://sonarr:8989"
-                  instance_name: "sonarr-hd"
+                  # Lidarr import list-specific options.
+                  full_url: "http://lidarr:8989"
+                  instance_name: "lidarr-hd"
                   source_quality_profiles:
                     - "HD/SD"
                   source_language_profiles:
@@ -632,33 +632,33 @@ class SonarrImportList(ProgramImportList):
 
     An important thing to keep in mind is that unless Buildarr is on the same network
     as the rest of the *Arr stack, the hostnames and ports may differ to what the
-    Sonarr instances will use to communicate with each other. `full_url` should be
-    set to what the Sonarr instance itself will use to link to the target instance.
+    Lidarr instances will use to communicate with each other. `full_url` should be
+    set to what the Lidarr instance itself will use to link to the target instance.
     """
 
-    type: Literal["sonarr"] = "sonarr"
+    type: Literal["lidarr"] = "lidarr"
     """
     Type value associated with this kind of import list.
     """
 
-    instance_name: Optional[Annotated[str, InstanceReference(plugin_name="sonarr")]] = None
+    instance_name: Optional[Annotated[str, InstanceReference(plugin_name="lidarr")]] = None
     """
-    The name of the Sonarr instance within Buildarr, if linking this Sonarr instance
-    with another Buildarr-defined Sonarr instance.
+    The name of the Lidarr instance within Buildarr, if linking this Lidarr instance
+    with another Buildarr-defined Lidarr instance.
 
     *New in version 0.3.0.*
     """
 
     full_url: AnyHttpUrl
     """
-    The URL that this Sonarr instance will use to connect to the source Sonarr instance.
+    The URL that this Lidarr instance will use to connect to the source Lidarr instance.
     """
 
-    api_key: Optional[SonarrApiKey] = None
+    api_key: Optional[LidarrApiKey] = None
     """
-    API key used to access the source Sonarr instance.
+    API key used to access the source Lidarr instance.
 
-    If a Sonarr instance managed by Buildarr is not referenced using `instance_name`,
+    If a Lidarr instance managed by Buildarr is not referenced using `instance_name`,
     this attribute is required.
     """
 
@@ -670,8 +670,8 @@ class SonarrImportList(ProgramImportList):
     List of IDs (or names) of the quality profiles on the source instance to import from.
 
     Quality profile names can only be used if `instance_name` is used to
-    link to a Buildarr-defined Sonarr instance.
-    If linking to a Sonarr instance outside Buildarr, IDs must be used.
+    link to a Buildarr-defined Lidarr instance.
+    If linking to a Lidarr instance outside Buildarr, IDs must be used.
 
     *Changed in version 0.3.0*: Renamed from `source_quality_profile_ids`
     (which is still valid as an alias), and added support for quality profile names.
@@ -685,8 +685,8 @@ class SonarrImportList(ProgramImportList):
     List of IDs (or names) of the language profiles on the source instance to import from.
 
     Language profile names can only be used if `instance_name` is used to
-    link to a Buildarr-defined Sonarr instance.
-    If linking to a Sonarr instance outside Buildarr, IDs must be used.
+    link to a Buildarr-defined Lidarr instance.
+    If linking to a Lidarr instance outside Buildarr, IDs must be used.
 
     *Changed in version 0.3.0*: Renamed from `source_language_profile_ids`
     (which is still valid as an alias), and added support for language profile names.
@@ -700,16 +700,16 @@ class SonarrImportList(ProgramImportList):
     List of IDs (or names) of the tags on the source instance to import from.
 
     Tag names can only be used if `instance_name` is used to
-    link to a Buildarr-defined Sonarr instance.
-    If linking to a Sonarr instance outside Buildarr, IDs must be used.
+    link to a Buildarr-defined Lidarr instance.
+    If linking to a Lidarr instance outside Buildarr, IDs must be used.
 
     *Changed in version 0.3.0*: Renamed from `source_tag_ids`
     (which is still valid as an alias), and added support for tag names.
     """
 
-    _implementation_name: ClassVar[str] = "Sonarr"
-    _implementation: ClassVar[str] = "SonarrImport"
-    _config_contract: ClassVar[str] = "SonarrSettings"
+    _implementation_name: ClassVar[str] = "Lidarr"
+    _implementation: ClassVar[str] = "LidarrImport"
+    _config_contract: ClassVar[str] = "LidarrSettings"
     _remote_map: ClassVar[List[RemoteMapEntry]] = []
 
     @classmethod
@@ -763,26 +763,26 @@ class SonarrImportList(ProgramImportList):
         ]
 
     @classmethod
-    def _get_secrets(cls, instance_name: str) -> SonarrSecrets:
+    def _get_secrets(cls, instance_name: str) -> LidarrSecrets:
         """
-        Fetch the secrets metadata for the given Sonarr instance from the Buildarr state.
+        Fetch the secrets metadata for the given Lidarr instance from the Buildarr state.
 
         Args:
-            instance_name (str): Name of Sonarr instance to get the secrets for.
+            instance_name (str): Name of Lidarr instance to get the secrets for.
 
         Returns:
-            Sonarr instance secrets metadata
+            Lidarr instance secrets metadata
         """
-        return cast(SonarrSecrets, state.instance_secrets["sonarr"][instance_name])
+        return cast(LidarrSecrets, state.instance_secrets["lidarr"][instance_name])
 
     @classmethod
     def _get_resources(cls, instance_name: str, resource_type: str) -> List[Dict[str, Any]]:
         """
-        Make an API request to Sonarr to get the list of resources of the requested type.
+        Make an API request to Lidarr to get the list of resources of the requested type.
 
         Args:
-            instance_name (str): Name of Sonarr instance to get the resources from.
-            profile_type (str): Name of the resource to get in the Sonarr API.
+            instance_name (str): Name of Lidarr instance to get the resources from.
+            profile_type (str): Name of the resource to get in the Lidarr API.
 
         Returns:
             List of resource API objects
@@ -825,16 +825,16 @@ class SonarrImportList(ProgramImportList):
     ) -> List[int]:
         """
         Encode a collection of resource IDs/names into a list of resource IDs
-        from the target Sonarr instance.
+        from the target Lidarr instance.
 
         Args:
-            instance_name (Optional[str]): Target Sonarr instance to get resource IDs from.
+            instance_name (Optional[str]): Target Lidarr instance to get resource IDs from.
             resources (Iterable[Union[str, int]]): Resource names/IDs to encode.
             resource_type (str): Type of resource to encode into IDs.
             name_key (str, optional): Key for the name of the resource. Defaults to `name`.
 
         Returns:
-            List of resource IDs for the target Sonarr instance
+            List of resource IDs for the target Lidarr instance
         """
         resource_ids: Set[int] = set()
         if not instance_name:
@@ -926,16 +926,16 @@ class SonarrImportList(ProgramImportList):
         name_key: str = "name",
     ) -> Set[Union[int, str]]:
         """
-        Resolve target Sonarr instance resource IDs/names into resource names.
+        Resolve target Lidarr instance resource IDs/names into resource names.
 
         If `ignore_nonexistent_ids` is `True` and a resource ID was not found
-        on the Sonarr instance, it is returned as-is.
-        This will prompt Buildarr to remove the offending ID from Sonarr,
+        on the Lidarr instance, it is returned as-is.
+        This will prompt Buildarr to remove the offending ID from Lidarr,
         so a warning is output to the logs to notify the user.
 
         Args:
             name (str): Name associated with this import list.
-            instance_name (str): Target Sonarr instance name in Buildarr.
+            instance_name (str): Target Lidarr instance name in Buildarr.
             source_resources (Iterable[Union[int, str]]):
             resource_type (str): Type of resource to resolve IDs for names.
             resource_description (str): Description of the resource type for logging.
@@ -944,7 +944,7 @@ class SonarrImportList(ProgramImportList):
 
         Raises:
             ValueError: If a non-existent ID was found and `ignore_nonexistent_ids` is `False`.
-            ValueError: If a resource name was not found on the target Sonarr instance.
+            ValueError: If a resource name was not found on the target Lidarr instance.
 
         Returns:
             List of resolved source resource names (and invalid IDs)
@@ -963,7 +963,7 @@ class SonarrImportList(ProgramImportList):
                     if ignore_nonexistent_ids:
                         logger.warning(
                             (
-                                "Source %s ID %i referenced by remote Sonarr instance "
+                                "Source %s ID %i referenced by remote Lidarr instance "
                                 "not found on target instance '%s', removing"
                             ),
                             resource_description,
@@ -987,7 +987,7 @@ class SonarrImportList(ProgramImportList):
                 )
                 error_message = (
                     f"Source {resource_description} '{resource}' "
-                    f"not found on target Sonarr instance '{instance_name}' "
+                    f"not found on target Lidarr instance '{instance_name}' "
                     f"in import list '{name}' "
                     f"(available {resource_description}s: {_resources_str})"
                 )
@@ -1024,7 +1024,7 @@ class PlexWatchlistImportList(PlexImportList):
 
 class TraktListImportList(TraktImportList):
     """
-    Import an arbitrary list from Trakt into Sonarr.
+    Import an arbitrary list from Trakt into Lidarr.
     """
 
     type: Literal["trakt-list"] = "trakt-list"
@@ -1112,7 +1112,7 @@ class TraktUserImportList(TraktImportList):
 
 
 IMPORTLIST_TYPES: Tuple[Type[ImportList], ...] = (
-    SonarrImportList,
+    LidarrImportList,
     PlexWatchlistImportList,
     TraktListImportList,
     TraktPopularlistImportList,
@@ -1124,7 +1124,7 @@ IMPORTLIST_TYPE_MAP: Dict[str, Type[ImportList]] = {
 }
 
 ImportListType = Union[
-    SonarrImportList,
+    LidarrImportList,
     PlexWatchlistImportList,
     TraktListImportList,
     TraktPopularlistImportList,
@@ -1132,12 +1132,12 @@ ImportListType = Union[
 ]
 
 
-class SonarrImportListsSettingsConfig(SonarrConfigBase):
+class LidarrImportListsSettingsConfig(LidarrConfigBase):
     """
-    Using import lists, Sonarr can monitor and import episodes from external sources.
+    Using import lists, Lidarr can monitor and import episodes from external sources.
 
     ```yaml
-    sonarr:
+    lidarr:
       settings:
         import_lists:
           delete_unmanaged: False # Default is `false`
@@ -1159,7 +1159,7 @@ class SonarrImportListsSettingsConfig(SonarrConfigBase):
             72662: "Teletubbies" # TVDB ID is key, set an artibrary title as value
     ```
 
-    Media can be queued on the source, and Sonarr will automatically import them,
+    Media can be queued on the source, and Lidarr will automatically import them,
     look for suitable releases, and download them.
 
     Media that you don't want to import can be ignored using the `exclusions`
@@ -1186,11 +1186,11 @@ class SonarrImportListsSettingsConfig(SonarrConfigBase):
     Dictionary of TV series that should be excluded from being imported.
 
     The key is the TVDB ID of the series to exclude, the value is
-    a title to give the series in the Sonarr UI.
+    a title to give the series in the Lidarr UI.
     """
 
     @classmethod
-    def from_remote(cls, secrets: SonarrSecrets) -> Self:
+    def from_remote(cls, secrets: LidarrSecrets) -> Self:
         importlists = api_get(secrets, "/api/v3/importlist")
         quality_profile_ids: Dict[str, int] = (
             {pro["name"]: pro["id"] for pro in api_get(secrets, "/api/v3/qualityprofile")}
@@ -1224,13 +1224,13 @@ class SonarrImportListsSettingsConfig(SonarrConfigBase):
     def update_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         remote: Self,
         check_unmanaged: bool = False,
     ) -> bool:
         # Flag for whether or not the import list configuration was updated or not.
         changed = False
-        # Get required resource ID references from the remote Sonarr instance.
+        # Get required resource ID references from the remote Lidarr instance.
         importlist_ids: Dict[str, int] = {
             importlist_json["name"]: importlist_json["id"]
             for importlist_json in api_get(secrets, "/api/v3/importlist")
@@ -1280,7 +1280,7 @@ class SonarrImportListsSettingsConfig(SonarrConfigBase):
         # We're done!
         return changed
 
-    def delete_remote(self, tree: str, secrets: SonarrSecrets, remote: Self) -> bool:
+    def delete_remote(self, tree: str, secrets: LidarrSecrets, remote: Self) -> bool:
         changed = False
         importlist_ids: Dict[str, int] = {
             importlist_json["name"]: importlist_json["id"]

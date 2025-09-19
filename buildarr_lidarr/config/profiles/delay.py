@@ -13,7 +13,7 @@
 
 
 """
-Sonarr plugin delay profile configuration.
+Lidarr plugin delay profile configuration.
 """
 
 from __future__ import annotations
@@ -27,8 +27,8 @@ from pydantic import NonNegativeInt
 from typing_extensions import Self
 
 from ...api import api_delete, api_get, api_post, api_put
-from ...secrets import SonarrSecrets
-from ..types import SonarrConfigBase
+from ...secrets import LidarrSecrets
+from ..types import LidarrConfigBase
 
 logger = getLogger(__name__)
 
@@ -85,7 +85,7 @@ class PreferredProtocol(BaseEnum):
         )
 
 
-class DelayProfile(SonarrConfigBase):
+class DelayProfile(LidarrConfigBase):
     """
     Delay profiles are defined as an ordered list of objects.
 
@@ -219,7 +219,7 @@ class DelayProfile(SonarrConfigBase):
     def _create_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         tag_ids: Mapping[str, int],
         order: int,
     ) -> None:
@@ -235,7 +235,7 @@ class DelayProfile(SonarrConfigBase):
     def _update_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         remote: DelayProfile,
         tag_ids: Mapping[str, int],
         profile_id: int,
@@ -260,31 +260,31 @@ class DelayProfile(SonarrConfigBase):
     def _delete_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         profile_id: int,
     ) -> None:
         logger.info("%s: (...) -> (deleted)", tree)
         api_delete(secrets, f"/api/v3/delayprofile/{profile_id}")
 
 
-class SonarrDelayProfilesSettingsConfig(SonarrConfigBase):
+class LidarrDelayProfilesSettingsConfig(LidarrConfigBase):
     """
     Configuration parameters for controlling how Buildarr handles delay profiles.
     """
 
     delete_unmanaged: bool = False
     """
-    Controls how Buildarr manages existing delay profiles in Sonarr when no delay profiles
+    Controls how Buildarr manages existing delay profiles in Lidarr when no delay profiles
     are defined in Buildarr.
 
     When set to `True` and there are no delay profiles defined in Buildarr,
     delete all delay profiles except the default delay profile (which can't be deleted).
 
     When set to `False` and there are no delay profiles defined in Buildarr,
-    do not modify the existing delay profiles in Sonarr at all.
+    do not modify the existing delay profiles in Lidarr at all.
 
     Due to the unique way delay profiles are structured, when they are defined in Buildarr,
-    they always overwrite the existing delay profiles on the remote Sonarr instance
+    they always overwrite the existing delay profiles on the remote Lidarr instance
     and configure it exactly as laid out in Buildarr, irrespective of this value.
 
     If unsure, leave this value set to `False`.
@@ -292,7 +292,7 @@ class SonarrDelayProfilesSettingsConfig(SonarrConfigBase):
 
     definitions: List[DelayProfile] = []
     """
-    Define delay profiles to configure on Sonarr here.
+    Define delay profiles to configure on Lidarr here.
 
     The final delay profile in the list is assumed to be the default delay profile.
     """
@@ -301,7 +301,7 @@ class SonarrDelayProfilesSettingsConfig(SonarrConfigBase):
     #       and the last one has no tags.
 
     @classmethod
-    def from_remote(cls, secrets: SonarrSecrets) -> Self:
+    def from_remote(cls, secrets: LidarrSecrets) -> Self:
         profiles: List[Dict[str, Any]] = sorted(
             api_get(secrets, "/api/v3/delayprofile"),
             key=lambda p: p["order"],
@@ -319,7 +319,7 @@ class SonarrDelayProfilesSettingsConfig(SonarrConfigBase):
     def update_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         remote: Self,
         check_unmanaged: bool = False,
     ) -> bool:

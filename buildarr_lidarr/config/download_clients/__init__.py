@@ -13,7 +13,7 @@
 
 
 """
-Sonarr plugin download client settings.
+Lidarr plugin download client settings.
 """
 
 from __future__ import annotations
@@ -26,8 +26,8 @@ from pydantic import Field
 from typing_extensions import Annotated, Self
 
 from ...api import api_get, api_put
-from ...secrets import SonarrSecrets
-from ..types import SonarrConfigBase
+from ...secrets import LidarrSecrets
+from ..types import LidarrConfigBase
 from .download_clients import (
     DOWNLOADCLIENT_TYPE_MAP,
     Aria2DownloadClient,
@@ -48,7 +48,7 @@ from .download_clients import (
     UtorrentDownloadClient,
     VuzeDownloadClient,
 )
-from .remote_path_mappings import SonarrRemotePathMappingsSettingsConfig
+from .remote_path_mappings import LidarrRemotePathMappingsSettingsConfig
 
 logger = getLogger(__name__)
 
@@ -73,10 +73,10 @@ DownloadClientType = Union[
 ]
 
 
-class SonarrDownloadClientsSettingsConfig(SonarrConfigBase):
+class LidarrDownloadClientsSettingsConfig(LidarrConfigBase):
     """
-    Download clients retrieve media files being tracked by Sonarr,
-    and store them in a location Sonarr can access to manage the
+    Download clients retrieve media files being tracked by Lidarr,
+    and store them in a location Lidarr can access to manage the
     downloaded files.
 
     Download clients that use Usenet or BitTorrent can be configured,
@@ -85,7 +85,7 @@ class SonarrDownloadClientsSettingsConfig(SonarrConfigBase):
     ```yaml
     ---
 
-    sonarr:
+    lidarr:
       settings:
         download_clients:
           enable_completed_download_handling: true
@@ -126,12 +126,12 @@ class SonarrDownloadClientsSettingsConfig(SonarrConfigBase):
     Download client definitions, for connecting with external media downloaders.
     """
 
-    remote_path_mappings: SonarrRemotePathMappingsSettingsConfig = (
-        SonarrRemotePathMappingsSettingsConfig()
+    remote_path_mappings: LidarrRemotePathMappingsSettingsConfig = (
+        LidarrRemotePathMappingsSettingsConfig()
     )
     """
     Configuration for mapping paths on download client hosts to their counterparts
-    on this Sonarr instance.
+    on this Lidarr instance.
 
     For more information, refer to "Configuring remote path mappings".
     """
@@ -142,7 +142,7 @@ class SonarrDownloadClientsSettingsConfig(SonarrConfigBase):
     ]
 
     @classmethod
-    def from_remote(cls, secrets: SonarrSecrets) -> Self:
+    def from_remote(cls, secrets: LidarrSecrets) -> Self:
         downloadclient_config = api_get(secrets, "/api/v3/config/downloadclient")
         downloadclients = api_get(secrets, "/api/v3/downloadclient")
         tag_ids: Dict[str, int] = (
@@ -162,7 +162,7 @@ class SonarrDownloadClientsSettingsConfig(SonarrConfigBase):
                     )
                     for dc in downloadclients
                 },
-                "remote_path_mappings": SonarrRemotePathMappingsSettingsConfig._from_remote(
+                "remote_path_mappings": LidarrRemotePathMappingsSettingsConfig._from_remote(
                     secrets=secrets,
                 ),
             },
@@ -171,7 +171,7 @@ class SonarrDownloadClientsSettingsConfig(SonarrConfigBase):
     def update_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         remote: Self,
         check_unmanaged: bool = False,
     ) -> bool:
@@ -213,7 +213,7 @@ class SonarrDownloadClientsSettingsConfig(SonarrConfigBase):
     def _update_remote_definitions(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         local: Mapping[str, DownloadClientType],
         remote: Mapping[str, DownloadClientType],
         check_unmanaged: bool,
@@ -250,7 +250,7 @@ class SonarrDownloadClientsSettingsConfig(SonarrConfigBase):
                 changed = True
         return changed
 
-    def delete_remote(self, tree: str, secrets: SonarrSecrets, remote: Self) -> bool:
+    def delete_remote(self, tree: str, secrets: LidarrSecrets, remote: Self) -> bool:
         definitions_changed = self._delete_remote_definitions(
             tree=f"{tree}.definitions",
             secrets=secrets,
@@ -267,7 +267,7 @@ class SonarrDownloadClientsSettingsConfig(SonarrConfigBase):
     def _delete_remote_definitions(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         local: Mapping[str, DownloadClientType],
         remote: Mapping[str, DownloadClientType],
     ) -> bool:

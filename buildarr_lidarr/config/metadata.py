@@ -13,7 +13,7 @@
 
 
 """
-Sonarr plugin metadata settings configuration.
+Lidarr plugin metadata settings configuration.
 """
 
 from __future__ import annotations
@@ -24,11 +24,11 @@ from buildarr.config import RemoteMapEntry
 from typing_extensions import Self
 
 from ..api import api_get, api_put
-from ..secrets import SonarrSecrets
-from .types import SonarrConfigBase
+from ..secrets import LidarrSecrets
+from .types import LidarrConfigBase
 
 
-class Metadata(SonarrConfigBase):
+class Metadata(LidarrConfigBase):
     """
     Metadata definition base class.
     """
@@ -49,7 +49,7 @@ class Metadata(SonarrConfigBase):
     def _update_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         remote: Self,
         api_metadata: Mapping[str, Any],
         check_unmanaged: bool = False,
@@ -89,7 +89,7 @@ class KodiEmbyMetadata(Metadata):
     Output metadata files in a format suitable for Kodi (XBMC) or Emby.
 
     ```yaml
-    sonarr:
+    lidarr:
       settings:
         metadata:
           kodi_emby:
@@ -150,7 +150,7 @@ class RoksboxMetadata(Metadata):
     Output metadata files in a format suitable for Roksbox.
 
     ```yaml
-    sonarr:
+    lidarr:
       settings:
         metadata:
           roksbox:
@@ -196,7 +196,7 @@ class WdtvMetadata(Metadata):
     Output metadata files in a format suitable for WDTV.
 
     ```yaml
-    sonarr:
+    lidarr:
       settings:
         metadata:
           wdtv:
@@ -244,9 +244,9 @@ METADATA_TYPE_MAP: Dict[str, Type[Metadata]] = {
 }
 
 
-class SonarrMetadataSettingsConfig(SonarrConfigBase):
+class LidarrMetadataSettingsConfig(LidarrConfigBase):
     """
-    Sonarr metadata settings.
+    Lidarr metadata settings.
     Implementation wise each metadata is a unique object, updated using separate requests.
     """
 
@@ -255,7 +255,7 @@ class SonarrMetadataSettingsConfig(SonarrConfigBase):
     wdtv: WdtvMetadata = WdtvMetadata()
 
     @classmethod
-    def from_remote(cls, secrets: SonarrSecrets) -> Self:
+    def from_remote(cls, secrets: LidarrSecrets) -> Self:
         kodi_emby_metadata: Optional[Dict[str, Any]] = None
         roksbox_metadata: Optional[Dict[str, Any]] = None
         wdtv_metadata: Optional[Dict[str, Any]] = None
@@ -268,15 +268,15 @@ class SonarrMetadataSettingsConfig(SonarrConfigBase):
                 wdtv_metadata = metadata
         if kodi_emby_metadata is None:
             raise RuntimeError(
-                "Unable to find Kodi (XBMC)/Emby metadata on Sonarr, database might be corrupt",
+                "Unable to find Kodi (XBMC)/Emby metadata on Lidarr, database might be corrupt",
             )
         if roksbox_metadata is None:
             raise RuntimeError(
-                "Unable to find Roksbox metadata on Sonarr, database might be corrupt",
+                "Unable to find Roksbox metadata on Lidarr, database might be corrupt",
             )
         if wdtv_metadata is None:
             raise RuntimeError(
-                "Unable to find WDTV metadata on Sonarr, database might be corrupt",
+                "Unable to find WDTV metadata on Lidarr, database might be corrupt",
             )
         return cls(
             kodi_emby=KodiEmbyMetadata._from_remote(kodi_emby_metadata),
@@ -287,7 +287,7 @@ class SonarrMetadataSettingsConfig(SonarrConfigBase):
     def update_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         remote: Self,
         check_unmanaged: bool = False,
     ) -> bool:
@@ -303,15 +303,15 @@ class SonarrMetadataSettingsConfig(SonarrConfigBase):
                 wdtv_metadata = metadata
         if kodi_emby_metadata is None:
             raise RuntimeError(
-                "Unable to find Kodi (XBMC)/Emby metadata on Sonarr, database might be corrupt",
+                "Unable to find Kodi (XBMC)/Emby metadata on Lidarr, database might be corrupt",
             )
         if roksbox_metadata is None:
             raise RuntimeError(
-                "Unable to find Roksbox metadata on Sonarr, database might be corrupt",
+                "Unable to find Roksbox metadata on Lidarr, database might be corrupt",
             )
         if wdtv_metadata is None:
             raise RuntimeError(
-                "Unable to find WDTV metadata on Sonarr, database might be corrupt",
+                "Unable to find WDTV metadata on Lidarr, database might be corrupt",
             )
         return any(
             [

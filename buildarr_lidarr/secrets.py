@@ -13,7 +13,7 @@
 
 
 """
-Sonarr plugin secrets file model.
+Lidarr plugin secrets file model.
 """
 
 from __future__ import annotations
@@ -26,25 +26,25 @@ from buildarr.types import NonEmptyStr, Port
 from pydantic import field_validator
 
 from .api import api_get, get_initialize_js
-from .exceptions import SonarrAPIError, SonarrSecretsUnauthorizedError
-from .types import SonarrApiKey, SonarrProtocol
+from .exceptions import LidarrAPIError, LidarrSecretsUnauthorizedError
+from .types import LidarrApiKey, LidarrProtocol
 
 if TYPE_CHECKING:
     from typing_extensions import Self
 
-    from .config import SonarrConfig
+    from .config import LidarrConfig
 
 
-class SonarrSecrets(SecretsPlugin["SonarrConfig"]):
+class LidarrSecrets(SecretsPlugin["LidarrConfig"]):
     """
-    Sonarr API secrets.
+    Lidarr API secrets.
     """
 
     hostname: NonEmptyStr
     port: Port
-    protocol: SonarrProtocol
+    protocol: LidarrProtocol
     url_base: Optional[str]
-    api_key: SonarrApiKey
+    api_key: LidarrApiKey
     version: NonEmptyStr
 
     @property
@@ -76,7 +76,7 @@ class SonarrSecrets(SecretsPlugin["SonarrConfig"]):
         return f"{protocol}://{hostname}:{port}{url_base or ''}"
 
     @classmethod
-    def get(cls, config: SonarrConfig) -> Self:
+    def get(cls, config: LidarrConfig) -> Self:
         return cls.get_from_url(
             hostname=config.hostname,
             port=config.port,
@@ -104,11 +104,11 @@ class SonarrSecrets(SecretsPlugin["SonarrConfig"]):
         if not api_key:
             try:
                 initialize_js = get_initialize_js(host_url)
-            except SonarrAPIError as err:
+            except LidarrAPIError as err:
                 if err.status_code == HTTPStatus.UNAUTHORIZED:
-                    raise SonarrSecretsUnauthorizedError(
+                    raise LidarrSecretsUnauthorizedError(
                         (
-                            "Unable to retrieve the API key for the Sonarr instance "
+                            "Unable to retrieve the API key for the Lidarr instance "
                             f"at '{host_url}': Authentication is enabled. "
                             "Please set the 'Settings -> General -> Authentication' attribute "
                             "to 'None', or if you do not wish to disable authentication, "
@@ -124,11 +124,11 @@ class SonarrSecrets(SecretsPlugin["SonarrConfig"]):
                 Dict[str, Any],
                 api_get(host_url, "/api/v3/system/status", api_key=api_key),
             )
-        except SonarrAPIError as err:
+        except LidarrAPIError as err:
             if err.status_code == HTTPStatus.UNAUTHORIZED:
-                raise SonarrSecretsUnauthorizedError(
+                raise LidarrSecretsUnauthorizedError(
                     (
-                        f"Incorrect API key for the Sonarr instance at '{host_url}'. "
+                        f"Incorrect API key for the Lidarr instance at '{host_url}'. "
                         "Please check that the API key is set correctly in the Buildarr "
                         "configuration, and that it is set to the value as shown in "
                         "'Settings -> General -> API Key' on the Radarr instance."
@@ -139,13 +139,13 @@ class SonarrSecrets(SecretsPlugin["SonarrConfig"]):
         try:
             version = cast(str, system_status["version"])
         except KeyError:
-            raise SonarrSecretsUnauthorizedError(
-                f"Unable to find Sonarr version in system status metadata: {system_status}",
+            raise LidarrSecretsUnauthorizedError(
+                f"Unable to find Lidarr version in system status metadata: {system_status}",
             ) from None
         except TypeError as err:
-            raise SonarrSecretsUnauthorizedError(
+            raise LidarrSecretsUnauthorizedError(
                 (
-                    f"Unable to parse Sonarr system status metadata: {err} "
+                    f"Unable to parse Lidarr system status metadata: {err} "
                     f"(metadata object: {system_status})"
                 ),
             ) from None

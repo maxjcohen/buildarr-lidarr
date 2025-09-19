@@ -13,7 +13,7 @@
 
 
 """
-Sonarr plugin for Buildarr root module.
+Lidarr plugin for Buildarr root module.
 """
 
 from __future__ import annotations
@@ -23,6 +23,6 @@ from importlib_metadata import PackageNotFoundError, version as package_version
 __all__ = ["__version__"]
 
 try:
-    __version__: str = package_version("buildarr-sonarr")
+    __version__: str = package_version("buildarr-lidarr")
 except PackageNotFoundError:
     __version__ = "0.4.0"

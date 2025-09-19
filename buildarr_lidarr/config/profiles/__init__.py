@@ -13,24 +13,24 @@
 
 
 """
-Sonarr plugin profiles settings configuration.
+Lidarr plugin profiles settings configuration.
 """
 
 from __future__ import annotations
 
-from ..types import SonarrConfigBase
-from .delay import SonarrDelayProfilesSettingsConfig
-from .language import SonarrLanguageProfilesSettingsConfig
-from .quality import SonarrQualityProfilesSettingsConfig
-from .release import SonarrReleaseProfilesSettingsConfig
+from ..types import LidarrConfigBase
+from .delay import LidarrDelayProfilesSettingsConfig
+from .language import LidarrLanguageProfilesSettingsConfig
+from .quality import LidarrQualityProfilesSettingsConfig
+from .release import LidarrReleaseProfilesSettingsConfig
 
 
-class SonarrProfilesSettingsConfig(SonarrConfigBase):
+class LidarrProfilesSettingsConfig(LidarrConfigBase):
     """
-    Sonarr plugin profiles settings configuration.
+    Lidarr plugin profiles settings configuration.
     """
 
-    quality_profiles: SonarrQualityProfilesSettingsConfig = SonarrQualityProfilesSettingsConfig()
-    language_profiles: SonarrLanguageProfilesSettingsConfig = SonarrLanguageProfilesSettingsConfig()
-    delay_profiles: SonarrDelayProfilesSettingsConfig = SonarrDelayProfilesSettingsConfig()
-    release_profiles: SonarrReleaseProfilesSettingsConfig = SonarrReleaseProfilesSettingsConfig()
+    quality_profiles: LidarrQualityProfilesSettingsConfig = LidarrQualityProfilesSettingsConfig()
+    language_profiles: LidarrLanguageProfilesSettingsConfig = LidarrLanguageProfilesSettingsConfig()
+    delay_profiles: LidarrDelayProfilesSettingsConfig = LidarrDelayProfilesSettingsConfig()
+    release_profiles: LidarrReleaseProfilesSettingsConfig = LidarrReleaseProfilesSettingsConfig()

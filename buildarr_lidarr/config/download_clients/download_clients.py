@@ -13,7 +13,7 @@
 
 
 """
-Sonarr plugin download client definition.
+Lidarr plugin download client definition.
 """
 
 from __future__ import annotations
@@ -27,8 +27,8 @@ from pydantic import ValidationInfo, field_validator
 from typing_extensions import Self
 
 from ...api import api_delete, api_post, api_put
-from ...secrets import SonarrSecrets
-from ..types import SonarrConfigBase
+from ...secrets import LidarrSecrets
+from ..types import LidarrConfigBase
 
 logger = getLogger(__name__)
 
@@ -227,7 +227,7 @@ class UtorrentState(BaseEnum):
     stop = 3
 
 
-class DownloadClient(SonarrConfigBase):
+class DownloadClient(LidarrConfigBase):
     """
     Download clients are defined using the following format.
     Here is an example of a Transmission download client being configured.
@@ -235,16 +235,16 @@ class DownloadClient(SonarrConfigBase):
     ```yaml
     ---
 
-    sonarr:
+    lidarr:
       settings:
         download_clients:
           definitions:
             Transmission: # Name of the download client
               type: "transmission" # Type of download client
-              enable: true # Enable the download client in Sonarr
+              enable: true # Enable the download client in Lidarr
               host: "transmission"
               port: 9091
-              category: "sonarr"
+              category: "lidarr"
               # Define any other type-specific or global
               # download client attributes as needed.
     ```
@@ -253,7 +253,7 @@ class DownloadClient(SonarrConfigBase):
     to tell Buildarr what type of download client to configure.
     The name of the download client definition is just a name, and has no meaning.
 
-    `enable` can be set to `False` to keep the download client configured on Sonarr,
+    `enable` can be set to `False` to keep the download client configured on Lidarr,
     but disabled so that it is inactive.
 
     The below attributes can be defined on any type of download client.
@@ -261,7 +261,7 @@ class DownloadClient(SonarrConfigBase):
 
     enable: bool = True
     """
-    When `True`, this download client is active and Sonarr is able to send requests to it.
+    When `True`, this download client is active and Lidarr is able to send requests to it.
     """
 
     priority: int = 1
@@ -286,7 +286,7 @@ class DownloadClient(SonarrConfigBase):
 
     tags: Set[NonEmptyStr] = set()
     """
-    Sonarr tags to assign to the download clients.
+    Lidarr tags to assign to the download clients.
     Only media under those tags will be assigned to this client.
 
     If no tags are assigned, all media can use the client.
@@ -328,7 +328,7 @@ class DownloadClient(SonarrConfigBase):
     def _create_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         tag_ids: Mapping[str, int],
         downloadclient_name: str,
     ) -> None:
@@ -350,7 +350,7 @@ class DownloadClient(SonarrConfigBase):
     def _update_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         remote: Self,
         tag_ids: Mapping[str, int],
         downloadclient_id: int,
@@ -379,7 +379,7 @@ class DownloadClient(SonarrConfigBase):
             return True
         return False
 
-    def _delete_remote(self, secrets: SonarrSecrets, downloadclient_id: int) -> None:
+    def _delete_remote(self, secrets: LidarrSecrets, downloadclient_id: int) -> None:
         api_delete(secrets, f"/api/v3/downloadclient/{downloadclient_id}")
 
 
@@ -436,10 +436,10 @@ class DownloadstationUsenetDownloadClient(UsenetDownloadClient):
 
     category: Optional[str] = None
     """
-    Associate media from Sonarr with a category.
+    Associate media from Lidarr with a category.
     Creates a `[category]` subdirectory in the output directory.
 
-    Adding a category specific to Sonarr avoids conflicts with unrelated non-Sonarr downloads.
+    Adding a category specific to Lidarr avoids conflicts with unrelated non-Lidarr downloads.
     Using a category is optional, but strongly recommended.
     """
 
@@ -514,9 +514,9 @@ class NzbgetDownloadClient(UsenetDownloadClient):
 
     category: Optional[str] = None
     """
-    Associate media from Sonarr with a category.
+    Associate media from Lidarr with a category.
 
-    Adding a category specific to Sonarr avoids conflicts with unrelated non-Sonarr downloads.
+    Adding a category specific to Lidarr avoids conflicts with unrelated non-Lidarr downloads.
     Using a category is optional, but strongly recommended.
     """
 
@@ -617,9 +617,9 @@ class NzbvortexDownloadClient(UsenetDownloadClient):
 
     category: Optional[str] = None
     """
-    Associate media from Sonarr with a category.
+    Associate media from Lidarr with a category.
 
-    Adding a category specific to Sonarr avoids conflicts with unrelated non-Sonarr downloads.
+    Adding a category specific to Lidarr avoids conflicts with unrelated non-Lidarr downloads.
     Using a category is optional, but strongly recommended.
     """
 
@@ -680,7 +680,7 @@ class PneumaticDownloadClient(UsenetDownloadClient):
 
     nzb_folder: NonEmptyStr
     """
-    Folder in which Sonarr will store `.nzb` files.
+    Folder in which Lidarr will store `.nzb` files.
 
     This folder will need to be reachable from Kodi/XMBC.
     """
@@ -736,9 +736,9 @@ class SabnzbdDownloadClient(UsenetDownloadClient):
 
     category: Optional[str] = None
     """
-    Associate media from Sonarr with a category.
+    Associate media from Lidarr with a category.
 
-    Adding a category specific to Sonarr avoids conflicts with unrelated non-Sonarr downloads.
+    Adding a category specific to Lidarr avoids conflicts with unrelated non-Lidarr downloads.
     Using a category is optional, but strongly recommended.
     """
 
@@ -810,12 +810,12 @@ class UsenetBlackholeDownloadClient(UsenetDownloadClient):
 
     nzb_folder: NonEmptyStr
     """
-    Folder in which Sonarr will store `.nzb` files.
+    Folder in which Lidarr will store `.nzb` files.
     """
 
     watch_folder: NonEmptyStr
     """
-    Folder from which Sonarr should import completed downloads.
+    Folder from which Lidarr should import completed downloads.
     """
 
     _implementation_name: ClassVar[str] = "Usenet Blackhole"
@@ -909,19 +909,19 @@ class DelugeDownloadClient(TorrentDownloadClient):
     Password to use to authenticate the download client user.
     """
 
-    category: Optional[str] = "tv-sonarr"
+    category: Optional[str] = "tv-lidarr"
     """
-    Associate media from Sonarr with a category.
+    Associate media from Lidarr with a category.
 
-    Adding a category specific to Sonarr avoids conflicts with unrelated non-Sonarr downloads.
+    Adding a category specific to Lidarr avoids conflicts with unrelated non-Lidarr downloads.
     Using a category is optional, but strongly recommended.
     """
 
     postimport_category: Optional[str] = None
     """
-    Category for Sonarr to set after it has imported the download.
+    Category for Lidarr to set after it has imported the download.
 
-    Sonarr will not remove torrents in that category even if seeding has finished.
+    Lidarr will not remove torrents in that category even if seeding has finished.
     Leave blank, set to `null` or undefined to keep the same category.
     """
 
@@ -1010,10 +1010,10 @@ class DownloadstationTorrentDownloadClient(TorrentDownloadClient):
 
     category: Optional[str] = None
     """
-    Associate media from Sonarr with a category.
+    Associate media from Lidarr with a category.
     Creates a `[category]` subdirectory in the output directory.
 
-    Adding a category specific to Sonarr avoids conflicts with unrelated non-Sonarr downloads.
+    Adding a category specific to Lidarr avoids conflicts with unrelated non-Lidarr downloads.
     Using a category is optional, but strongly recommended.
     """
 
@@ -1091,7 +1091,7 @@ class FloodDownloadClient(TorrentDownloadClient):
     Manually specified download destination.
     """
 
-    flood_tags: Set[NonEmptyStr] = {"sonarr"}
+    flood_tags: Set[NonEmptyStr] = {"lidarr"}
     """
     Initial tags of a download within Flood.
 
@@ -1101,7 +1101,7 @@ class FloodDownloadClient(TorrentDownloadClient):
 
     postimport_tags: Set[NonEmptyStr] = set()
     """
-    Tags to append within Flood after a download has been imported into Sonarr.
+    Tags to append within Flood after a download has been imported into Lidarr.
     """
 
     additional_tags: Set[FloodMediaTag] = set()
@@ -1189,11 +1189,11 @@ class HadoukenDownloadClient(TorrentDownloadClient):
     Password to use to authenticate the download client user.
     """
 
-    category: NonEmptyStr = "sonarr-tv"
+    category: NonEmptyStr = "lidarr-tv"
     """
-    Associate media from Sonarr with a category.
+    Associate media from Lidarr with a category.
 
-    Adding a category specific to Sonarr avoids conflicts with unrelated non-Sonarr downloads.
+    Adding a category specific to Lidarr avoids conflicts with unrelated non-Lidarr downloads.
     Using a category is optional, but strongly recommended.
     """
 
@@ -1255,19 +1255,19 @@ class QbittorrentDownloadClient(TorrentDownloadClient):
     Password to use to authenticate the download client user, if required.
     """
 
-    category: Optional[str] = "tv-sonarr"
+    category: Optional[str] = "tv-lidarr"
     """
-    Associate media from Sonarr with a category.
+    Associate media from Lidarr with a category.
 
-    Adding a category specific to Sonarr avoids conflicts with unrelated non-Sonarr downloads.
+    Adding a category specific to Lidarr avoids conflicts with unrelated non-Lidarr downloads.
     Using a category is optional, but strongly recommended.
     """
 
     postimport_category: Optional[str] = None
     """
-    Category for Sonarr to set after it has imported the download.
+    Category for Lidarr to set after it has imported the download.
 
-    Sonarr will not remove torrents in that category even if seeding has finished.
+    Lidarr will not remove torrents in that category even if seeding has finished.
     Leave blank, set to `null` or undefined to keep the same category.
     """
 
@@ -1419,19 +1419,19 @@ class RtorrentDownloadClient(TorrentDownloadClient):
     Password to use to authenticate the download client user.
     """
 
-    category: Optional[str] = "tv-sonarr"
+    category: Optional[str] = "tv-lidarr"
     """
-    Associate media from Sonarr with a category.
+    Associate media from Lidarr with a category.
 
-    Adding a category specific to Sonarr avoids conflicts with unrelated non-Sonarr downloads.
+    Adding a category specific to Lidarr avoids conflicts with unrelated non-Lidarr downloads.
     Using a category is optional, but strongly recommended.
     """
 
     postimport_category: Optional[str] = None
     """
-    Category for Sonarr to set after it has imported the download.
+    Category for Lidarr to set after it has imported the download.
 
-    Sonarr will not remove torrents in that category even if seeding has finished.
+    Lidarr will not remove torrents in that category even if seeding has finished.
     Leave blank, set to `null` or undefined to keep the same category.
     """
 
@@ -1516,12 +1516,12 @@ class TorrentBlackholeDownloadClient(TorrentDownloadClient):
 
     torrent_folder: NonEmptyStr
     """
-    Folder in which Sonarr will store `.torrent` files.
+    Folder in which Lidarr will store `.torrent` files.
     """
 
     watch_folder: NonEmptyStr
     """
-    Folder from which Sonarr should import completed downloads.
+    Folder from which Lidarr should import completed downloads.
     """
 
     save_magnet_files: bool = False
@@ -1538,7 +1538,7 @@ class TorrentBlackholeDownloadClient(TorrentDownloadClient):
 
     read_only: bool = True
     """
-    Instead of moving files, this will instruct Sonarr to copy or hard link
+    Instead of moving files, this will instruct Lidarr to copy or hard link
     (depending on settings/system configuration).
     """
 
@@ -1612,10 +1612,10 @@ class TransmissionDownloadClientBase(TorrentDownloadClient):
 
     category: Optional[str] = None
     """
-    Associate media from Sonarr with a category.
+    Associate media from Lidarr with a category.
     Creates a `[category]` subdirectory in the output directory.
 
-    Adding a category specific to Sonarr avoids conflicts with unrelated non-Sonarr downloads.
+    Adding a category specific to Lidarr avoids conflicts with unrelated non-Lidarr downloads.
     Using a category is optional, but strongly recommended.
 
     `category` and `directory` are mutually exclusive, only one of them can be set at a time.
@@ -1768,19 +1768,19 @@ class UtorrentDownloadClient(TorrentDownloadClient):
     Password to use to authenticate the download client user.
     """
 
-    category: Optional[str] = "tv-sonarr"
+    category: Optional[str] = "tv-lidarr"
     """
-    Associate media from Sonarr with a category.
+    Associate media from Lidarr with a category.
 
-    Adding a category specific to Sonarr avoids conflicts with unrelated non-Sonarr downloads.
+    Adding a category specific to Lidarr avoids conflicts with unrelated non-Lidarr downloads.
     Using a category is optional, but strongly recommended.
     """
 
     postimport_category: Optional[str] = None
     """
-    Category for Sonarr to set after it has imported the download.
+    Category for Lidarr to set after it has imported the download.
 
-    Sonarr will not remove torrents in that category even if seeding has finished.
+    Lidarr will not remove torrents in that category even if seeding has finished.
     Leave blank, set to `null` or undefined to keep the same category.
     """
 

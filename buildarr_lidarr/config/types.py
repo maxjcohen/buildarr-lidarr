@@ -13,7 +13,7 @@
 
 
 """
-Sonarr plugin configuration utility classes and functions.
+Lidarr plugin configuration utility classes and functions.
 """
 
 from __future__ import annotations
@@ -23,8 +23,8 @@ from typing import TYPE_CHECKING
 from buildarr.config import ConfigBase
 
 if TYPE_CHECKING:
-    from ..secrets import SonarrSecrets  # noqa: F401
+    from ..secrets import LidarrSecrets  # noqa: F401
 
 
-class SonarrConfigBase(ConfigBase["SonarrSecrets"]):
+class LidarrConfigBase(ConfigBase["LidarrSecrets"]):
     pass

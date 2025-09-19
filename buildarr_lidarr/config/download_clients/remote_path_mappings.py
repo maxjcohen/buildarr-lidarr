@@ -13,7 +13,7 @@
 
 
 """
-Sonarr plugin download client remote path mappings.
+Lidarr plugin download client remote path mappings.
 """
 
 from __future__ import annotations
@@ -27,9 +27,9 @@ from pydantic import field_validator
 from typing_extensions import Self
 
 from ...api import api_delete, api_get, api_post, api_put
-from ...secrets import SonarrSecrets
+from ...secrets import LidarrSecrets
 from ...types import OSAgnosticPath
-from ..types import SonarrConfigBase
+from ..types import LidarrConfigBase
 
 logger = getLogger(__name__)
 
@@ -51,7 +51,7 @@ class Ensure(BaseEnum):
         return repr(self.name)
 
 
-class RemotePathMapping(SonarrConfigBase):
+class RemotePathMapping(LidarrConfigBase):
     """
     Remote path mapping definitions themselves are relatively simple.
 
@@ -76,7 +76,7 @@ class RemotePathMapping(SonarrConfigBase):
 
     local_path: OSAgnosticPath
     """
-    The path that Sonarr should use to access the remote path locally.
+    The path that Lidarr should use to access the remote path locally.
 
     *Changed in version 0.6.4*: Path checking will now match paths
     whether or not the defined path ends in a trailing slash.
@@ -111,7 +111,7 @@ class RemotePathMapping(SonarrConfigBase):
     def _from_remote(cls, remote_attrs: Mapping[str, Any]) -> Self:
         return cls(**cls.get_local_attrs(cls._remote_map, remote_attrs))
 
-    def _create_remote(self, tree: str, secrets: SonarrSecrets) -> None:
+    def _create_remote(self, tree: str, secrets: LidarrSecrets) -> None:
         api_post(
             secrets,
             "/api/v3/remotepathmapping",
@@ -121,7 +121,7 @@ class RemotePathMapping(SonarrConfigBase):
     def _update_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         remote: Self,
         remotepathmapping_id: int,
     ) -> bool:
@@ -144,7 +144,7 @@ class RemotePathMapping(SonarrConfigBase):
     def _delete_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         remotepathmapping_id: int,
         delete: bool,
     ) -> bool:
@@ -155,17 +155,17 @@ class RemotePathMapping(SonarrConfigBase):
         return False
 
 
-class SonarrRemotePathMappingsSettingsConfig(SonarrConfigBase):
+class LidarrRemotePathMappingsSettingsConfig(LidarrConfigBase):
     """
     Remote path mappings are used to associate a path on a download client remote host
-    with its associated path on the local Sonarr instance.
+    with its associated path on the local Lidarr instance.
 
-    The main use case for this is when Sonarr and the download client are not running
+    The main use case for this is when Lidarr and the download client are not running
     on the same system, or when Docker is used to isolate these services and the
     mountpoints for media locations are not consistent between the containers.
 
     ```yaml
-    sonarr:
+    lidarr:
       settings:
         download_clients:
           definitions:
@@ -184,7 +184,7 @@ class SonarrRemotePathMappingsSettingsConfig(SonarrConfigBase):
 
     Remote path mappings can be difficult to properly configure.
     TRaSH-Guides provides an
-    [excellent guide](https://trash-guides.info/Sonarr/Sonarr-remote-path-mapping/)
+    [excellent guide](https://trash-guides.info/Lidarr/Lidarr-remote-path-mapping/)
     that explains what they are for, and how to use them.
     """
 
@@ -193,7 +193,7 @@ class SonarrRemotePathMappingsSettingsConfig(SonarrConfigBase):
     Automatically delete remote path mappings not configured in Buildarr.
 
     Deleting existing remote path mappings can cause problems with a running
-    Sonarr instance. Think carefully before you enable this option.
+    Lidarr instance. Think carefully before you enable this option.
     """
 
     # TODO: validator to ensure every mapping is unique
@@ -203,7 +203,7 @@ class SonarrRemotePathMappingsSettingsConfig(SonarrConfigBase):
     """
 
     @classmethod
-    def _from_remote(cls, secrets: SonarrSecrets) -> Self:
+    def _from_remote(cls, secrets: LidarrSecrets) -> Self:
         return cls(
             definitions=sorted(
                 (
@@ -217,7 +217,7 @@ class SonarrRemotePathMappingsSettingsConfig(SonarrConfigBase):
     def _update_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         remote: Self,
     ) -> bool:
         # Track whether remote resource path mappings have been updated.
@@ -262,7 +262,7 @@ class SonarrRemotePathMappingsSettingsConfig(SonarrConfigBase):
         # Return changed status.
         return changed
 
-    def _delete_remote(self, tree: str, secrets: SonarrSecrets, remote: Self) -> bool:
+    def _delete_remote(self, tree: str, secrets: LidarrSecrets, remote: Self) -> bool:
         changed = False
         remote_rpm_ids: Dict[Tuple[str, OSAgnosticPath, OSAgnosticPath], int] = {
             (

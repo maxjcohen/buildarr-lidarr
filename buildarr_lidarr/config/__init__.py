@@ -13,7 +13,7 @@
 
 
 """
-Sonarr plugin configuration.
+Lidarr plugin configuration.
 """
 
 from __future__ import annotations
@@ -24,45 +24,45 @@ from buildarr.config import ConfigPlugin
 from buildarr.types import NonEmptyStr, Port
 from typing_extensions import Self
 
-from ..types import SonarrApiKey, SonarrProtocol
-from .connect import SonarrConnectSettingsConfig
-from .download_clients import SonarrDownloadClientsSettingsConfig
-from .general import SonarrGeneralSettingsConfig
-from .import_lists import SonarrImportListsSettingsConfig
-from .indexers import SonarrIndexersSettingsConfig
-from .media_management import SonarrMediaManagementSettingsConfig
-from .metadata import SonarrMetadataSettingsConfig
-from .profiles import SonarrProfilesSettingsConfig
-from .quality import SonarrQualitySettingsConfig
-from .tags import SonarrTagsSettingsConfig
-from .types import SonarrConfigBase
-from .ui import SonarrUISettingsConfig
+from ..types import LidarrApiKey, LidarrProtocol
+from .connect import LidarrConnectSettingsConfig
+from .download_clients import LidarrDownloadClientsSettingsConfig
+from .general import LidarrGeneralSettingsConfig
+from .import_lists import LidarrImportListsSettingsConfig
+from .indexers import LidarrIndexersSettingsConfig
+from .media_management import LidarrMediaManagementSettingsConfig
+from .metadata import LidarrMetadataSettingsConfig
+from .profiles import LidarrProfilesSettingsConfig
+from .quality import LidarrQualitySettingsConfig
+from .tags import LidarrTagsSettingsConfig
+from .types import LidarrConfigBase
+from .ui import LidarrUISettingsConfig
 
 if TYPE_CHECKING:
-    from ..secrets import SonarrSecrets
+    from ..secrets import LidarrSecrets
 
 
-class SonarrSettingsConfig(SonarrConfigBase):
+class LidarrSettingsConfig(LidarrConfigBase):
     """
-    Sonarr settings, used to configure a remote Sonarr instance.
+    Lidarr settings, used to configure a remote Lidarr instance.
     """
 
-    media_management: SonarrMediaManagementSettingsConfig = SonarrMediaManagementSettingsConfig()
-    profiles: SonarrProfilesSettingsConfig = SonarrProfilesSettingsConfig()
-    quality: SonarrQualitySettingsConfig = SonarrQualitySettingsConfig()
-    indexers: SonarrIndexersSettingsConfig = SonarrIndexersSettingsConfig()
-    download_clients: SonarrDownloadClientsSettingsConfig = SonarrDownloadClientsSettingsConfig()
-    import_lists: SonarrImportListsSettingsConfig = SonarrImportListsSettingsConfig()
-    connect: SonarrConnectSettingsConfig = SonarrConnectSettingsConfig()
-    metadata: SonarrMetadataSettingsConfig = SonarrMetadataSettingsConfig()
-    tags: SonarrTagsSettingsConfig = SonarrTagsSettingsConfig()
-    general: SonarrGeneralSettingsConfig = SonarrGeneralSettingsConfig()
-    ui: SonarrUISettingsConfig = SonarrUISettingsConfig()
+    media_management: LidarrMediaManagementSettingsConfig = LidarrMediaManagementSettingsConfig()
+    profiles: LidarrProfilesSettingsConfig = LidarrProfilesSettingsConfig()
+    quality: LidarrQualitySettingsConfig = LidarrQualitySettingsConfig()
+    indexers: LidarrIndexersSettingsConfig = LidarrIndexersSettingsConfig()
+    download_clients: LidarrDownloadClientsSettingsConfig = LidarrDownloadClientsSettingsConfig()
+    import_lists: LidarrImportListsSettingsConfig = LidarrImportListsSettingsConfig()
+    connect: LidarrConnectSettingsConfig = LidarrConnectSettingsConfig()
+    metadata: LidarrMetadataSettingsConfig = LidarrMetadataSettingsConfig()
+    tags: LidarrTagsSettingsConfig = LidarrTagsSettingsConfig()
+    general: LidarrGeneralSettingsConfig = LidarrGeneralSettingsConfig()
+    ui: LidarrUISettingsConfig = LidarrUISettingsConfig()
 
     def update_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         remote: Self,
         check_unmanaged: bool = False,
     ) -> bool:
@@ -142,7 +142,7 @@ class SonarrSettingsConfig(SonarrConfigBase):
             ],
         )
 
-    def delete_remote(self, tree: str, secrets: SonarrSecrets, remote: Self) -> bool:
+    def delete_remote(self, tree: str, secrets: LidarrSecrets, remote: Self) -> bool:
         # Overload base function to guarantee execution order of section deletions.
         # 1. Release profiles must be deleted before indexers.
         # 2. Indexers must be deleted before download clients.
@@ -175,17 +175,17 @@ class SonarrSettingsConfig(SonarrConfigBase):
         )
 
 
-class SonarrInstanceConfig(ConfigPlugin["SonarrSecrets"]):
+class LidarrInstanceConfig(ConfigPlugin["LidarrSecrets"]):
     """
-    By default, Buildarr will look for a single instance at `http://sonarr:8989`.
+    By default, Buildarr will look for a single instance at `http://lidarr:8989`.
     Most configurations are different, and to accommodate those, you can configure
-    how Buildarr connects to individual Sonarr instances.
+    how Buildarr connects to individual Lidarr instances.
 
-    Configuration of a single Sonarr instance:
+    Configuration of a single Lidarr instance:
 
     ```yaml
-    sonarr:
-      hostname: "sonarr.example.com"
+    lidarr:
+      hostname: "lidarr.example.com"
       port: 8989
       protocol: "http"
       settings:
@@ -195,82 +195,82 @@ class SonarrInstanceConfig(ConfigPlugin["SonarrSecrets"]):
     Configuration of multiple instances:
 
     ```yaml
-    sonarr:
+    lidarr:
       # Configuration and settings common to all instances.
       port: 8989
       settings:
         ...
       instances:
-        # Sonarr instance 1-specific configuration.
-        sonarr1:
-          hostname: "sonarr1.example.com"
+        # Lidarr instance 1-specific configuration.
+        lidarr1:
+          hostname: "lidarr1.example.com"
           settings:
             ...
-        # Sonarr instance 2-specific configuration.
-        sonarr2:
-          hostname: "sonarr2.example.com"
+        # Lidarr instance 2-specific configuration.
+        lidarr2:
+          hostname: "lidarr2.example.com"
           api_key: "..." # Explicitly define API key
           settings:
             ...
     ```
     """
 
-    hostname: NonEmptyStr = "sonarr"
+    hostname: NonEmptyStr = "lidarr"
     """
-    Hostname of the Sonarr instance to connect to.
+    Hostname of the Lidarr instance to connect to.
 
-    When defining a single instance using the global `sonarr` configuration block,
-    the default hostname is `sonarr`.
+    When defining a single instance using the global `lidarr` configuration block,
+    the default hostname is `lidarr`.
 
     When using multiple instance-specific configurations, the default hostname
     is the name given to the instance in the `instances` attribute.
 
     ```yaml
-    sonarr:
+    lidarr:
       instances:
-        sonarr1: # <--- This becomes the default hostname
+        lidarr1: # <--- This becomes the default hostname
           ...
     ```
     """
 
     port: Port = 8989
     """
-    Port number of the Sonarr instance to connect to.
+    Port number of the Lidarr instance to connect to.
     """
 
-    protocol: SonarrProtocol = "http"
+    protocol: LidarrProtocol = "http"
     """
-    Communication protocol to use to connect to Sonarr.
+    Communication protocol to use to connect to Lidarr.
     """
 
     # url_base is defined in the configuration plugin base class.
 
-    api_key: Optional[SonarrApiKey] = None
+    api_key: Optional[LidarrApiKey] = None
     """
-    API key to use to authenticate with the Sonarr instance.
+    API key to use to authenticate with the Lidarr instance.
 
     If undefined or set to `None`, automatically retrieve the API key.
-    This can only be done on Sonarr instances with authentication disabled.
+    This can only be done on Lidarr instances with authentication disabled.
     """
 
-    image: NonEmptyStr = "lscr.io/linuxserver/sonarr"
+    image: NonEmptyStr = "lscr.io/linuxserver/lidarr"
     """
     The default Docker image URI when generating a Docker Compose file.
     """
 
     version: Optional[str] = None
     """
-    The expected version of the Sonarr instance.
+    The expected version of the Lidarr instance.
     If undefined or set to `None`, the version is auto-detected.
 
     This value is also used when generating a Docker Compose file.
     When undefined or set to `None`, the version tag will be set to `latest`.
     """
 
-    settings: SonarrSettingsConfig = SonarrSettingsConfig()
+    settings: LidarrSettingsConfig = LidarrSettingsConfig()
     """
-    Sonarr settings.
-    Configuration options for Sonarr itself are set within this structure.
+    Lidarr settings.
+    Configuration options for Lidarr itself are set within this structure.
     """
 
     def uses_trash_metadata(self) -> bool:
@@ -296,12 +296,12 @@ class SonarrInstanceConfig(ConfigPlugin["SonarrSecrets"]):
             self.settings.quality._render()
 
     @classmethod
-    def from_remote(cls, secrets: SonarrSecrets) -> Self:
+    def from_remote(cls, secrets: LidarrSecrets) -> Self:
         """
         Read configuration from a remote instance and return it as a configuration object.
 
         Args:
-            secrets (SonarrSecrets): Instance host and secrets information
+            secrets (LidarrSecrets): Instance host and secrets information
 
         Returns:
             Configuration object for remote instance
@@ -313,7 +313,7 @@ class SonarrInstanceConfig(ConfigPlugin["SonarrSecrets"]):
             url_base=secrets.url_base,
             api_key=secrets.api_key,
             version=secrets.version,
-            settings=SonarrSettingsConfig.from_remote(secrets),
+            settings=LidarrSettingsConfig.from_remote(secrets),
         )
 
     def to_compose_service(self, compose_version: str, service_name: str) -> Dict[str, Any]:
@@ -323,16 +323,16 @@ class SonarrInstanceConfig(ConfigPlugin["SonarrSecrets"]):
         }
 
 
-class SonarrConfig(SonarrInstanceConfig):
+class LidarrConfig(LidarrInstanceConfig):
     """
-    Sonarr plugin global configuration class.
+    Lidarr plugin global configuration class.
     """
 
-    instances: Dict[str, SonarrInstanceConfig] = {}
+    instances: Dict[str, LidarrInstanceConfig] = {}
     """
-    Instance-specific Sonarr configuration.
+    Instance-specific Lidarr configuration.
 
-    Can only be defined on the global `sonarr` configuration block.
+    Can only be defined on the global `lidarr` configuration block.
 
     Globally specified configuration values apply to all instances.
     Configuration values specified on an instance-level take precedence at runtime.

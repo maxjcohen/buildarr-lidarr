@@ -13,7 +13,7 @@
 
 
 """
-Sonarr plugin UI settings configuration object.
+Lidarr plugin UI settings configuration object.
 """
 
 from __future__ import annotations
@@ -25,13 +25,13 @@ from buildarr.types import BaseEnum
 from typing_extensions import Self
 
 from ..api import api_get, api_put
-from ..secrets import SonarrSecrets
-from .types import SonarrConfigBase
+from ..secrets import LidarrSecrets
+from .types import LidarrConfigBase
 
 
 class FirstDayOfWeek(BaseEnum):
     """
-    First day of the week enumeration for Sonarr.
+    First day of the week enumeration for Lidarr.
     """
 
     sunday = 0
@@ -40,7 +40,7 @@ class FirstDayOfWeek(BaseEnum):
 
 class WeekColumnHeader(BaseEnum):
     """
-    Week column header enumeration for Sonarr.
+    Week column header enumeration for Lidarr.
     """
 
     month_first = "ddd M/D"
@@ -51,7 +51,7 @@ class WeekColumnHeader(BaseEnum):
 
 class ShortDateFormat(BaseEnum):
     """
-    Short date format enumeration for Sonarr.
+    Short date format enumeration for Lidarr.
     """
 
     word_month_first = "MMM D YYYY"
@@ -73,19 +73,19 @@ class LongDateFormat(BaseEnum):
 
 class TimeFormat(BaseEnum):
     """
-    Time format enumeration for Sonarr.
+    Time format enumeration for Lidarr.
     """
 
     twelve_hour = "h(:mm)a"
     twentyfour_hour = "HH:mm"
 
 
-class SonarrUISettingsConfig(SonarrConfigBase):
+class LidarrUISettingsConfig(LidarrConfigBase):
     """
-    Sonarr user interface configuration can also be set directly from Buildarr.
+    Lidarr user interface configuration can also be set directly from Buildarr.
 
     ```yaml
-    sonarr:
+    lidarr:
       settings:
         ui:
           first_day_of_week: "monday"
@@ -101,7 +101,7 @@ class SonarrUISettingsConfig(SonarrConfigBase):
     # Calendar
     first_day_of_week: FirstDayOfWeek = FirstDayOfWeek.sunday
     """
-    The first day of the week that Sonarr will show in the calendar.
+    The first day of the week that Lidarr will show in the calendar.
 
     Values:
 
@@ -158,7 +158,7 @@ class SonarrUISettingsConfig(SonarrConfigBase):
 
     show_relative_dates: bool = True
     """
-    When set to `True`, Sonarr will show relative dates (e.g. today, yesterday)
+    When set to `True`, Lidarr will show relative dates (e.g. today, yesterday)
     instead of absolute dates (e.g. Monday, Tuesday ...).
     """
 
@@ -180,7 +180,7 @@ class SonarrUISettingsConfig(SonarrConfigBase):
     ]
 
     @classmethod
-    def from_remote(cls, secrets: SonarrSecrets) -> Self:
+    def from_remote(cls, secrets: LidarrSecrets) -> Self:
         return cls(
             **cls.get_local_attrs(
                 remote_map=cls._remote_map,
@@ -191,7 +191,7 @@ class SonarrUISettingsConfig(SonarrConfigBase):
     def update_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         remote: Self,
         check_unmanaged: bool = False,
     ) -> bool:

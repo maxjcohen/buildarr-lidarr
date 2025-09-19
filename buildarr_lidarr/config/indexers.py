@@ -13,7 +13,7 @@
 
 
 """
-Sonarr plugin indexers settings configuration.
+Lidarr plugin indexers settings configuration.
 """
 
 from __future__ import annotations
@@ -41,8 +41,8 @@ from pydantic import AnyHttpUrl, Field, NonNegativeInt, PositiveInt, field_valid
 from typing_extensions import Annotated, Self
 
 from ..api import api_delete, api_get, api_post, api_put
-from ..secrets import SonarrSecrets
-from .types import SonarrConfigBase
+from ..secrets import LidarrSecrets
+from .types import LidarrConfigBase
 
 logger = getLogger(__name__)
 
@@ -86,7 +86,7 @@ class FilelistCategory(BaseEnum):
     SPORT = "Sport"
 
 
-class Indexer(SonarrConfigBase):
+class Indexer(LidarrConfigBase):
     """
     Here is an example of an indexer being configured in the `indexers` configuration
     block in Buildarr.
@@ -209,7 +209,7 @@ class Indexer(SonarrConfigBase):
     def _create_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         download_client_ids: Mapping[str, int],
         tag_ids: Mapping[str, int],
         indexer_name: str,
@@ -232,7 +232,7 @@ class Indexer(SonarrConfigBase):
     def _update_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         remote: Self,
         download_client_ids: Mapping[str, int],
         tag_ids: Mapping[str, int],
@@ -261,7 +261,7 @@ class Indexer(SonarrConfigBase):
             return True
         return False
 
-    def _delete_remote(self, secrets: SonarrSecrets, indexer_id: int) -> None:
+    def _delete_remote(self, secrets: LidarrSecrets, indexer_id: int) -> None:
         api_delete(secrets, f"/api/v3/indexer/{indexer_id}")
 
 
@@ -356,7 +356,7 @@ class NewznabIndexer(UsenetIndexer):
     """
     An indexer for monitoring a Newznab-compliant Usenet indexing site.
 
-    Sonarr defines presets for several popular sites.
+    Lidarr defines presets for several popular sites.
     """
 
     type: Literal["newznab"] = "newznab"
@@ -398,7 +398,7 @@ class NewznabIndexer(UsenetIndexer):
     * `TV/Documentary`
     * `TV/x265`
 
-    *Changed in version 0.6.1*: The Sonarr-native values for Newznab/Torznab categories
+    *Changed in version 0.6.1*: The Lidarr-native values for Newznab/Torznab categories
     (e.g. `TV/WEB-DL`) can now be specified, instead of the Buildarr-native values
     (e.g. `TV-WEBDL`). The old values can still be used.
     """
@@ -422,7 +422,7 @@ class NewznabIndexer(UsenetIndexer):
     * `TV/Documentary`
     * `TV/x265`
 
-    *Changed in version 0.6.1*: The Sonarr-native values for Newznab/Torznab categories
+    *Changed in version 0.6.1*: The Lidarr-native values for Newznab/Torznab categories
     (e.g. `TV/WEB-DL`) can now be specified, instead of the Buildarr-native values
     (e.g. `TV-WEBDL`). The old values can still be used.
     """
@@ -864,7 +864,7 @@ class TorznabIndexer(TorrentIndexer):
     """
     Monitor and search for new releases on a Torznab-compliant torrent indexing site.
 
-    Sonarr defines presets for several popular sites.
+    Lidarr defines presets for several popular sites.
     """
 
     type: Literal["torznab"] = "torznab"
@@ -906,7 +906,7 @@ class TorznabIndexer(TorrentIndexer):
     * `TV/Documentary`
     * `TV/x265`
 
-    *Changed in version 0.6.1*: The Sonarr-native values for Newznab/Torznab categories
+    *Changed in version 0.6.1*: The Lidarr-native values for Newznab/Torznab categories
     (e.g. `TV/WEB-DL`) can now be specified, instead of the Buildarr-native values
     (e.g. `TV-WEBDL`). The old values can still be used.
     """
@@ -929,7 +929,7 @@ class TorznabIndexer(TorrentIndexer):
     * `TV/Documentary`
     * `TV/x265`
 
-    *Changed in version 0.6.1*: The Sonarr-native values for Newznab/Torznab categories
+    *Changed in version 0.6.1*: The Lidarr-native values for Newznab/Torznab categories
     (e.g. `TV/WEB-DL`) can now be specified, instead of the Buildarr-native values
     (e.g. `TV-WEBDL`). The old values can still be used.
     """
@@ -1016,14 +1016,14 @@ IndexerType = Union[
 ]
 
 
-class SonarrIndexersSettingsConfig(SonarrConfigBase):
+class LidarrIndexersSettingsConfig(LidarrConfigBase):
     """
     Indexers are used to monitor for new releases of media on external trackers.
-    When a suitable release has been found, Sonarr registers it for download
+    When a suitable release has been found, Lidarr registers it for download
     on one of the configured download clients.
 
     ```yaml
-    sonarr:
+    lidarr:
       config:
         indexers:
           minimum_age: 0
@@ -1049,10 +1049,10 @@ class SonarrIndexersSettingsConfig(SonarrConfigBase):
     ```
 
     The following parameters are available for configuring indexers and
-    how they are handled by Sonarr.
+    how they are handled by Lidarr.
 
-    For more information on how Sonarr finds epsiodes, refer to the FAQ on
-    [WikiArr](https://wiki.servarr.com/sonarr/faq#how-does-sonarr-find-episodes).
+    For more information on how Lidarr finds epsiodes, refer to the FAQ on
+    [WikiArr](https://wiki.servarr.com/lidarr/faq#how-does-lidarr-find-episodes).
     """
 
     minimum_age: NonNegativeInt = 0  # minutes
@@ -1107,7 +1107,7 @@ class SonarrIndexersSettingsConfig(SonarrConfigBase):
     ]
 
     @classmethod
-    def from_remote(cls, secrets: SonarrSecrets) -> Self:
+    def from_remote(cls, secrets: LidarrSecrets) -> Self:
         indexer_config = api_get(secrets, "/api/v3/config/indexer")
         indexers = api_get(secrets, "/api/v3/indexer")
         download_client_ids: Dict[str, int] = (
@@ -1137,7 +1137,7 @@ class SonarrIndexersSettingsConfig(SonarrConfigBase):
     def update_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         remote: Self,
         check_unmanaged: bool = False,
     ) -> bool:
@@ -1193,7 +1193,7 @@ class SonarrIndexersSettingsConfig(SonarrConfigBase):
                 changed = True
         return changed
 
-    def delete_remote(self, tree: str, secrets: SonarrSecrets, remote: Self) -> bool:
+    def delete_remote(self, tree: str, secrets: LidarrSecrets, remote: Self) -> bool:
         changed = False
         indexer_ids: Dict[str, int] = {
             indexer["name"]: indexer["id"] for indexer in api_get(secrets, "/api/v3/indexer")

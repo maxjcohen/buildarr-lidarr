@@ -13,7 +13,7 @@
 
 
 """
-Sonarr plugin exception classes.
+Lidarr plugin exception classes.
 """
 
 from __future__ import annotations
@@ -21,17 +21,17 @@ from __future__ import annotations
 from buildarr.exceptions import BuildarrError
 
 
-class SonarrError(BuildarrError):
+class LidarrError(BuildarrError):
     """
-    Sonarr plugin exception base class.
+    Lidarr plugin exception base class.
     """
 
     pass
 
 
-class SonarrAPIError(SonarrError):
+class LidarrAPIError(LidarrError):
     """
-    Sonarr API exception class.
+    Lidarr API exception class.
     """
 
     def __init__(self, msg: str, status_code: int) -> None:
@@ -39,17 +39,17 @@ class SonarrAPIError(SonarrError):
         super().__init__(msg)
 
 
-class SonarrSecretsError(SonarrError):
+class LidarrSecretsError(LidarrError):
     """
-    Sonarr plugin secrets exception base class.
+    Lidarr plugin secrets exception base class.
     """
 
     pass
 
 
-class SonarrSecretsUnauthorizedError(SonarrSecretsError):
+class LidarrSecretsUnauthorizedError(LidarrSecretsError):
     """
-    Error raised when Buildarr was unable to authenticate with Sonarr.
+    Error raised when Buildarr was unable to authenticate with Lidarr.
     """
 
     pass

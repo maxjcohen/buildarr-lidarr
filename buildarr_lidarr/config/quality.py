@@ -13,7 +13,7 @@
 
 
 """
-Sonarr plugin quality settings configuration object.
+Lidarr plugin quality settings configuration object.
 """
 
 from __future__ import annotations
@@ -29,8 +29,8 @@ from pydantic import Field, ValidationInfo, field_validator
 from typing_extensions import Annotated, Self
 
 from ..api import api_get, api_put
-from ..secrets import SonarrSecrets
-from .types import SonarrConfigBase
+from ..secrets import LidarrSecrets
+from .types import LidarrConfigBase
 
 QUALITYDEFINITION_MAX = 400
 """
@@ -38,7 +38,7 @@ The upper bound for the maximum quality allowed in a quality definition.
 """
 
 
-class QualityDefinition(SonarrConfigBase):
+class QualityDefinition(LidarrConfigBase):
     """
     Manually set quality definitions can have the following parameters.
     """
@@ -89,7 +89,7 @@ class QualityDefinition(SonarrConfigBase):
         return value
 
 
-class SonarrQualitySettingsConfig(SonarrConfigBase):
+class LidarrQualitySettingsConfig(LidarrConfigBase):
     """
     Quality definitions are used to set the permitted bit rates for each quality level.
 
@@ -97,7 +97,7 @@ class SonarrQualitySettingsConfig(SonarrConfigBase):
     imported from TRaSH-Guides.
 
     ```yaml
-    sonarr:
+    lidarr:
       settings:
         quality:
           trash_id: "bef99584217af744e404ed44a33af589" # series
@@ -109,12 +109,12 @@ class SonarrQualitySettingsConfig(SonarrConfigBase):
     ```
 
     Quality definition profiles retrieved from TRaSH-Guides are automatically
-    kept up to date by Buildarr, with the latest values being pushed to Sonarr
+    kept up to date by Buildarr, with the latest values being pushed to Lidarr
     on an update run.
 
     For more information, refer to the guides from
-    [WikiArr](https://wiki.servarr.com/sonarr/settings#quality-1)
-    and [TRaSH-Guides](https://trash-guides.info/Sonarr/Sonarr-Quality-Settings-File-Size/).
+    [WikiArr](https://wiki.servarr.com/lidarr/settings#quality-1)
+    and [TRaSH-Guides](https://trash-guides.info/Lidarr/Lidarr-Quality-Settings-File-Size/).
     """
 
     # When defined, all explicitly defined quality definitions override the Trash version.
@@ -130,7 +130,7 @@ class SonarrQualitySettingsConfig(SonarrConfigBase):
     Explicitly set quality definitions here.
 
     The key of the definition is the "Quality" column of the Quality Definitions page
-    in Sonarr, **not** "Title".
+    in Lidarr, **not** "Title".
 
     If `trash_id` is set, any values set here will override the default values provided
     from the TRaSH-Guides quality definition profile.
@@ -146,7 +146,7 @@ class SonarrQualitySettingsConfig(SonarrConfigBase):
         if not self.trash_id:
             return
         for quality_file in (
-            state.trash_metadata_dir / "docs" / "json" / "sonarr" / "quality-size"
+            state.trash_metadata_dir / "docs" / "json" / "lidarr" / "quality-size"
         ).iterdir():
             with quality_file.open() as f:
                 quality_json = json.load(f)
@@ -161,11 +161,11 @@ class SonarrQualitySettingsConfig(SonarrConfigBase):
                             )
                     return
         raise ConfigTrashIDNotFoundError(
-            f"Unable to find Sonarr quality definition file with trash ID '{self.trash_id}'",
+            f"Unable to find Lidarr quality definition file with trash ID '{self.trash_id}'",
         )
 
     @classmethod
-    def from_remote(cls, secrets: SonarrSecrets) -> Self:
+    def from_remote(cls, secrets: LidarrSecrets) -> Self:
         return cls(
             definitions={
                 definition_json["quality"]["name"]: QualityDefinition(
@@ -184,7 +184,7 @@ class SonarrQualitySettingsConfig(SonarrConfigBase):
     def update_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         remote: Self,
         check_unmanaged: bool = False,
     ) -> bool:

@@ -13,7 +13,7 @@
 
 
 """
-Sonarr plugin connect settings configuration.
+Lidarr plugin connect settings configuration.
 """
 
 from __future__ import annotations
@@ -28,8 +28,8 @@ from pydantic import AnyHttpUrl, EmailStr, Field, NonNegativeInt
 from typing_extensions import Annotated, Self
 
 from ..api import api_delete, api_get, api_post, api_put
-from ..secrets import SonarrSecrets
-from .types import SonarrConfigBase
+from ..secrets import LidarrSecrets
+from .types import LidarrConfigBase
 from .util import trakt_expires_encoder
 
 logger = getLogger(__name__)
@@ -128,17 +128,17 @@ class WebhookMethod(BaseEnum):
     PUT = 2
 
 
-class NotificationTriggers(SonarrConfigBase):
+class NotificationTriggers(LidarrConfigBase):
     """
     Connections are configured using the following syntax.
 
     ```yaml
-    sonarr:
+    lidarr:
       settings:
         connect:
           delete_unmanaged: false # Optional
           definitions:
-            Email: # Name of connection in Sonarr.
+            Email: # Name of connection in Lidarr.
               type: "email" # Required
               notification_triggers: # When to send notifications.
                 on_grab: true
@@ -157,9 +157,9 @@ class NotificationTriggers(SonarrConfigBase):
               server: "smtp.example.com"
               port: 465
               use_encryption: true
-              username: "sonarr"
+              username: "lidarr"
               password: "fake-password"
-              from_address: "sonarr@example.com"
+              from_address: "lidarr@example.com"
               recipient_addresses:
                 - "admin@example.com"
             # Add additional connections here.
@@ -231,7 +231,7 @@ class NotificationTriggers(SonarrConfigBase):
 
     on_application_update: bool = False
     """
-    Be notified when Sonarr gets updated to a new version.
+    Be notified when Lidarr gets updated to a new version.
     """
 
     _remote_map: ClassVar[List[RemoteMapEntry]] = [
@@ -248,9 +248,9 @@ class NotificationTriggers(SonarrConfigBase):
     ]
 
 
-class Connection(SonarrConfigBase):
+class Connection(LidarrConfigBase):
     """
-    Base class for a Sonarr connection.
+    Base class for a Lidarr connection.
     """
 
     notification_triggers: NotificationTriggers = NotificationTriggers()
@@ -260,7 +260,7 @@ class Connection(SonarrConfigBase):
 
     tags: List[NonEmptyStr] = []
     """
-    Sonarr tags to associate this connection with.
+    Lidarr tags to associate this connection with.
     """
 
     _implementation_name: ClassVar[str]
@@ -304,7 +304,7 @@ class Connection(SonarrConfigBase):
     def _create_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         tag_ids: Mapping[str, int],
         connection_name: str,
     ) -> None:
@@ -330,7 +330,7 @@ class Connection(SonarrConfigBase):
     def _update_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         remote: Self,
         tag_ids: Mapping[str, int],
         connection_id: int,
@@ -371,7 +371,7 @@ class Connection(SonarrConfigBase):
     def _delete_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         tag_ids: Mapping[str, int],
         connection_id: int,
         delete: bool,
@@ -412,7 +412,7 @@ class BoxcarConnection(Connection):
 
 class CustomscriptConnection(Connection):
     """
-    Execute a local script on the Sonarr instance when events occur.
+    Execute a local script on the Lidarr instance when events occur.
 
     Supported notification triggers: All
     """
@@ -649,8 +649,8 @@ class EmailConnection(Connection):
     Email address to send the mail as.
 
     *Changed in version 0.5.3*: Disallow RFC-5322 formatted mailbox addresses
-    (e.g. `Sonarr Notifications <sonarr@example.com>`), as they are **not**
-    supported by Sonarr V3 (the currently supported version).
+    (e.g. `Lidarr Notifications <lidarr@example.com>`), as they are **not**
+    supported by Lidarr V3 (the currently supported version).
     """
 
     recipient_addresses: Annotated[Set[EmailStr], Field(min_length=1)]
@@ -660,8 +660,8 @@ class EmailConnection(Connection):
     At least one address must be provided.
 
     *Changed in version 0.5.3*: Disallow RFC-5322 formatted mailbox addresses
-    (e.g. `Sonarr Notifications <sonarr@example.com>`), as they are **not**
-    supported by Sonarr V3 (the currently supported version).
+    (e.g. `Lidarr Notifications <lidarr@example.com>`), as they are **not**
+    supported by Lidarr V3 (the currently supported version).
     """
 
     cc_addresses: Set[EmailStr] = set()
@@ -669,8 +669,8 @@ class EmailConnection(Connection):
     Optional list of email addresses to copy (CC) the mail to.
 
     *Changed in version 0.5.3*: Disallow RFC-5322 formatted mailbox addresses
-    (e.g. `Sonarr Notifications <sonarr@example.com>`), as they are **not**
-    supported by Sonarr V3 (the currently supported version).
+    (e.g. `Lidarr Notifications <lidarr@example.com>`), as they are **not**
+    supported by Lidarr V3 (the currently supported version).
     """
 
     bcc_addresses: Set[EmailStr] = set()
@@ -678,8 +678,8 @@ class EmailConnection(Connection):
     Optional list of email addresses to blind copy (BCC) the mail to.
 
     *Changed in version 0.5.3*: Disallow RFC-5322 formatted mailbox addresses
-    (e.g. `Sonarr Notifications <sonarr@example.com>`), as they are **not**
-    supported by Sonarr V3 (the currently supported version).
+    (e.g. `Lidarr Notifications <lidarr@example.com>`), as they are **not**
+    supported by Lidarr V3 (the currently supported version).
     """
 
     _implementation_name: ClassVar[str] = "Email"
@@ -814,7 +814,7 @@ class JoinConnection(Connection):
     API key to use to authenticate with Join.
     """
 
-    # Deprecated, only uncomment if absolutely required by Sonarr
+    # Deprecated, only uncomment if absolutely required by Lidarr
     # device_ids: Set[int] = set()
 
     device_names: Set[NonEmptyStr] = set()
@@ -897,7 +897,7 @@ class KodiConnection(Connection):
 
     gui_notification: bool = False
     """
-    Enable showing notifications from Sonarr in the Kodi GUI.
+    Enable showing notifications from Lidarr in the Kodi GUI.
     """
 
     display_time: NonNegativeInt = 5  # seconds
@@ -964,8 +964,8 @@ class MailgunConnection(Connection):
     Email address to send the mail as.
 
     *Changed in version 0.5.3*: Disallow RFC-5322 formatted mailbox addresses
-    (e.g. `Sonarr Notifications <sonarr@example.com>`), as they are **not**
-    supported by Sonarr V3 (the currently supported version).
+    (e.g. `Lidarr Notifications <lidarr@example.com>`), as they are **not**
+    supported by Lidarr V3 (the currently supported version).
     """
 
     sender_domain: NonEmptyStr
@@ -980,8 +980,8 @@ class MailgunConnection(Connection):
     At least one recipient address is required.
 
     *Changed in version 0.5.3*: Disallow RFC-5322 formatted mailbox addresses
-    (e.g. `Sonarr Notifications <sonarr@example.com>`), as they are **not**
-    supported by Sonarr V3 (the currently supported version).
+    (e.g. `Lidarr Notifications <lidarr@example.com>`), as they are **not**
+    supported by Lidarr V3 (the currently supported version).
     """
 
     _implementation: ClassVar[str] = "Mailgun"
@@ -1035,7 +1035,7 @@ class PlexHomeTheaterConnection(Connection):
 
     gui_notification: bool = False
     """
-    Enable showing notifications from Sonarr in the Plex Home Theater GUI.
+    Enable showing notifications from Lidarr in the Plex Home Theater GUI.
     """
 
     display_time: NonNegativeInt = 5  # seconds
@@ -1286,7 +1286,7 @@ class PushoverConnection(Connection):
 
     api_key: Password
     """
-    API key assigned to Sonarr in Pushover.
+    API key assigned to Lidarr in Pushover.
     """
 
     devices: Set[NonEmptyStr] = set()
@@ -1372,8 +1372,8 @@ class SendgridConnection(Connection):
     Email address to send the mail as.
 
     *Changed in version 0.5.3*: Disallow RFC-5322 formatted mailbox addresses
-    (e.g. `Sonarr Notifications <sonarr@example.com>`), as they are **not**
-    supported by Sonarr V3 (the currently supported version).
+    (e.g. `Lidarr Notifications <lidarr@example.com>`), as they are **not**
+    supported by Lidarr V3 (the currently supported version).
     """
 
     recipient_addresses: Annotated[Set[EmailStr], Field(min_length=1)]
@@ -1383,8 +1383,8 @@ class SendgridConnection(Connection):
     At least one recipient address is required.
 
     *Changed in version 0.5.3*: Disallow RFC-5322 formatted mailbox addresses
-    (e.g. `Sonarr Notifications <sonarr@example.com>`), as they are **not**
-    supported by Sonarr V3 (the currently supported version).
+    (e.g. `Lidarr Notifications <lidarr@example.com>`), as they are **not**
+    supported by Lidarr V3 (the currently supported version).
     """
 
     _implementation: ClassVar[str] = "SendGrid"
@@ -1490,7 +1490,7 @@ class TelegramConnection(Connection):
 
     bot_token: Password
     """
-    The bot token assigned to the Sonarr instance.
+    The bot token assigned to the Lidarr instance.
     """
 
     chat_id: NonEmptyStr
@@ -1521,13 +1521,13 @@ class TraktConnection(Connection):
 
     !!! note
 
-        Sonarr directly authenticates with Trakt to generate tokens for it to use.
+        Lidarr directly authenticates with Trakt to generate tokens for it to use.
         At the moment, the easiest way to generate the tokens for Buildarr
-        is to do it using the GUI within Sonarr, and use the following
+        is to do it using the GUI within Lidarr, and use the following
         shell command to retrieve the generated configuration.
 
         ```bash
-        $ curl -X "GET" "<sonarr-url>/api/v3/notification" -H "X-Api-Key: <api-key>"
+        $ curl -X "GET" "<lidarr-url>/api/v3/notification" -H "X-Api-Key: <api-key>"
         ```
 
     Supported notification triggers: All except `on_grab`, `on_rename`,
@@ -1543,12 +1543,12 @@ class TraktConnection(Connection):
 
     access_token: Password
     """
-    Access token for Sonarr from Trakt.
+    Access token for Lidarr from Trakt.
     """
 
     refresh_token: Password
     """
-    Refresh token for Sonarr from Trakt.
+    Refresh token for Lidarr from Trakt.
     """
 
     expires: datetime
@@ -1741,9 +1741,9 @@ ConnectionType = Union[
 ]
 
 
-class SonarrConnectSettingsConfig(SonarrConfigBase):
+class LidarrConnectSettingsConfig(LidarrConfigBase):
     """
-    Manage notification connections in Sonarr.
+    Manage notification connections in Lidarr.
     """
 
     delete_unmanaged: bool = False
@@ -1756,11 +1756,11 @@ class SonarrConnectSettingsConfig(SonarrConfigBase):
 
     definitions: Dict[str, Annotated[ConnectionType, Field(discriminator="type")]] = {}
     """
-    Connection definitions to configure in Sonarr.
+    Connection definitions to configure in Lidarr.
     """
 
     @classmethod
-    def from_remote(cls, secrets: SonarrSecrets) -> Self:
+    def from_remote(cls, secrets: LidarrSecrets) -> Self:
         connections = api_get(secrets, "/api/v3/notification")
         tag_ids: Dict[str, int] = (
             {tag["label"]: tag["id"] for tag in api_get(secrets, "/api/v3/tag")}
@@ -1782,7 +1782,7 @@ class SonarrConnectSettingsConfig(SonarrConfigBase):
     def update_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         remote: Self,
         check_unmanaged: bool = False,
     ) -> bool:
@@ -1818,7 +1818,7 @@ class SonarrConnectSettingsConfig(SonarrConfigBase):
                 changed = True
         return changed
 
-    def delete_remote(self, tree: str, secrets: SonarrSecrets, remote: Self) -> bool:
+    def delete_remote(self, tree: str, secrets: LidarrSecrets, remote: Self) -> bool:
         changed = False
         connection_ids: Dict[str, int] = {
             connection_json["name"]: connection_json["id"]

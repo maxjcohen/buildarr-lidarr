@@ -13,7 +13,7 @@
 
 
 """
-Sonarr plugin tags settings configuration.
+Lidarr plugin tags settings configuration.
 """
 
 from __future__ import annotations
@@ -25,18 +25,18 @@ from buildarr.types import NonEmptyStr
 from typing_extensions import Self
 
 from ..api import api_get, api_post
-from ..secrets import SonarrSecrets
-from .types import SonarrConfigBase
+from ..secrets import LidarrSecrets
+from .types import LidarrConfigBase
 
 logger = getLogger(__name__)
 
 
-class SonarrTagsSettingsConfig(SonarrConfigBase):
+class LidarrTagsSettingsConfig(LidarrConfigBase):
     """
     Tags are used to associate media files with certain resources (e.g. release profiles).
 
     ```yaml
-    sonarr:
+    lidarr:
       settings:
         tags:
           definitions:
@@ -53,11 +53,11 @@ class SonarrTagsSettingsConfig(SonarrConfigBase):
     Define tags that are used within Buildarr here.
 
     If they are not defined here, you may get errors resulting from non-existent
-    tags from either Buildarr or Sonarr.
+    tags from either Buildarr or Lidarr.
     """
 
     @classmethod
-    def from_remote(cls, secrets: SonarrSecrets) -> Self:
+    def from_remote(cls, secrets: LidarrSecrets) -> Self:
         return cls(
             definitions=set(tag["label"] for tag in api_get(secrets, "/api/v3/tag")),
         )
@@ -65,11 +65,11 @@ class SonarrTagsSettingsConfig(SonarrConfigBase):
     def update_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         remote: Self,
         check_unmanaged: bool = False,
     ) -> bool:
-        # This only does creations and updates, as Sonarr automatically cleans up unused tags.
+        # This only does creations and updates, as Lidarr automatically cleans up unused tags.
         changed = False
         current_tags: Dict[str, int] = {
             tag["label"]: tag["id"] for tag in api_get(secrets, "/api/v3/tag")

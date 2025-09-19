@@ -13,7 +13,7 @@
 
 
 """
-Sonarr plugin release profile configuration.
+Lidarr plugin release profile configuration.
 """
 
 from __future__ import annotations
@@ -30,15 +30,15 @@ from pydantic import field_validator
 from typing_extensions import Self
 
 from ...api import api_delete, api_get, api_post, api_put
-from ...secrets import SonarrSecrets
-from ..types import SonarrConfigBase
+from ...secrets import LidarrSecrets
+from ..types import LidarrConfigBase
 
 logger = getLogger(__name__)
 
 
-class TrashFilter(SonarrConfigBase):
+class TrashFilter(LidarrConfigBase):
     """
-    Defines various ways that release profile terms from the guide are synchronised with Sonarr.
+    Defines various ways that release profile terms from the guide are synchronised with Lidarr.
     These terms have individual trash IDs, and using this filter allows you to
     pick and choose which parts of the release profile you want to use.
 
@@ -65,7 +65,7 @@ class TrashFilter(SonarrConfigBase):
     include: List[TrashID] = []
     """
     A list of `trash_id` values representing terms (`Required`, `Ignored`, or `Preferred`)
-    that should be included in the created Release Profile in Sonarr.
+    that should be included in the created Release Profile in Lidarr.
 
     Terms that are *not* specified here are excluded automatically.
     """
@@ -73,13 +73,13 @@ class TrashFilter(SonarrConfigBase):
     exclude: List[TrashID] = []
     """
     A list of `trash_id` values representing terms (`Required`, `Ignored`, or `Preferred`)
-    that should be excluded from the created Release Profile in Sonarr.
+    that should be excluded from the created Release Profile in Lidarr.
 
     Terms that are *not* specified here are included automatically.
     """
 
 
-class PreferredWord(SonarrConfigBase):
+class PreferredWord(LidarrConfigBase):
     """
     Buildarr object representing a Preferred Word in a Release Profile.
     """
@@ -88,7 +88,7 @@ class PreferredWord(SonarrConfigBase):
     score: int
 
 
-class ReleaseProfile(SonarrConfigBase):
+class ReleaseProfile(LidarrConfigBase):
     # Release profile data structure.
     #
     # There are two types of release profile: the type where filters are manually defined,
@@ -97,9 +97,9 @@ class ReleaseProfile(SonarrConfigBase):
 
     enable: bool = True
     """
-    Enable the release profile in Sonarr.
+    Enable the release profile in Lidarr.
 
-    If set to `False`, the release profile will be uploaded to Sonarr, but inactive.
+    If set to `False`, the release profile will be uploaded to Lidarr, but inactive.
     """
 
     trash_id: Optional[TrashID] = None
@@ -114,7 +114,7 @@ class ReleaseProfile(SonarrConfigBase):
     # If undefined, use the TRaSH-Guides provided release profile defaults.
     filter: TrashFilter = TrashFilter()
     """
-    ###### ::: buildarr_sonarr.config.profiles.release.TrashFilter
+    ###### ::: buildarr_lidarr.config.profiles.release.TrashFilter
         options:
           members:
             - include
@@ -135,7 +135,7 @@ class ReleaseProfile(SonarrConfigBase):
 
     must_contain: Set[NonEmptyStr] = set()
     """
-    A list of terms to mark as "Must Contain" in Sonarr.
+    A list of terms to mark as "Must Contain" in Lidarr.
 
     The release will be rejected if it does not contain one or more of terms
     (case insensitive) or regular expressions.
@@ -143,7 +143,7 @@ class ReleaseProfile(SonarrConfigBase):
 
     must_not_contain: Set[NonEmptyStr] = set()
     """
-    A list of terms to mark as "Must Not Contain" in Sonarr.
+    A list of terms to mark as "Must Not Contain" in Lidarr.
 
     The release will be rejected if it contains one or more of terms (case insensitive)
     or regular expressions.
@@ -173,7 +173,7 @@ class ReleaseProfile(SonarrConfigBase):
     include_preferred_when_renaming: bool = False
     """
     Add preferred words to the file name as `{Preferred Words}`
-    when doing automatic renaming in Sonarr.
+    when doing automatic renaming in Lidarr.
     """
 
     # None = (Any)
@@ -259,7 +259,7 @@ class ReleaseProfile(SonarrConfigBase):
         if not self.trash_id:
             return
         for profile_file in (
-            state.trash_metadata_dir / "docs" / "json" / "sonarr" / "rp"
+            state.trash_metadata_dir / "docs" / "json" / "lidarr" / "rp"
         ).iterdir():
             with profile_file.open() as f:
                 profile: Dict[str, Any] = json.load(f)
@@ -319,13 +319,13 @@ class ReleaseProfile(SonarrConfigBase):
                     self.preferred = preferred
                     return
         raise ConfigTrashIDNotFoundError(
-            f"Unable to find Sonarr release profile file with trash ID '{self.trash_id}'",
+            f"Unable to find Lidarr release profile file with trash ID '{self.trash_id}'",
         )
 
     def _create_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         profile_name: str,
         indexer_ids: Mapping[str, int],
         tag_ids: Mapping[str, int],
@@ -342,7 +342,7 @@ class ReleaseProfile(SonarrConfigBase):
     def _update_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         remote: Self,
         profile_id: int,
         profile_name: str,
@@ -365,11 +365,11 @@ class ReleaseProfile(SonarrConfigBase):
             return True
         return False
 
-    def _delete_remote(self, secrets: SonarrSecrets, profile_id: int) -> None:
+    def _delete_remote(self, secrets: LidarrSecrets, profile_id: int) -> None:
         api_delete(secrets, f"/api/v3/releaseprofile/{profile_id}")
 
 
-class SonarrReleaseProfilesSettingsConfig(SonarrConfigBase):
+class LidarrReleaseProfilesSettingsConfig(LidarrConfigBase):
     """
     Configuration parameters for controlling how Buildarr handles release profiles.
     """
@@ -381,7 +381,7 @@ class SonarrReleaseProfilesSettingsConfig(SonarrConfigBase):
 
     definitions: Dict[str, ReleaseProfile] = {}
     """
-    Define release profiles to configure on Sonarr here.
+    Define release profiles to configure on Lidarr here.
 
     If there are no release profiles defined and `delete_unmanaged` is `False`,
     Buildarr will not modify existing release profiles, but if `delete_unmanaged` is `True`,
@@ -389,7 +389,7 @@ class SonarrReleaseProfilesSettingsConfig(SonarrConfigBase):
     """
 
     @classmethod
-    def from_remote(cls, secrets: SonarrSecrets) -> Self:
+    def from_remote(cls, secrets: LidarrSecrets) -> Self:
         profiles: List[Dict[str, Any]] = api_get(secrets, "/api/v3/releaseprofile")
         indexer_ids: Dict[str, int] = (
             {tag["name"]: tag["id"] for tag in api_get(secrets, "/api/v3/indexer")}
@@ -411,7 +411,7 @@ class SonarrReleaseProfilesSettingsConfig(SonarrConfigBase):
     def update_remote(
         self,
         tree: str,
-        secrets: SonarrSecrets,
+        secrets: LidarrSecrets,
         remote: Self,
         check_unmanaged: bool = False,
     ) -> bool:
@@ -455,7 +455,7 @@ class SonarrReleaseProfilesSettingsConfig(SonarrConfigBase):
                 changed = True
         return changed
 
-    def delete_remote(self, tree: str, secrets: SonarrSecrets, remote: Self) -> bool:
+    def delete_remote(self, tree: str, secrets: LidarrSecrets, remote: Self) -> bool:
         changed = False
         profile_ids: Dict[str, int] = {
             profile_json["name"]: profile_json["id"]

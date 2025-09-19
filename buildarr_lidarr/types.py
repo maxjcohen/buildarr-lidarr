@@ -13,7 +13,7 @@
 
 
 """
-Sonarr plugin type hints.
+Lidarr plugin type hints.
 """
 
 from __future__ import annotations
@@ -28,8 +28,8 @@ from pydantic import GetCoreSchemaHandler, StringConstraints
 from pydantic_core import core_schema
 from typing_extensions import Annotated, Self
 
-SonarrProtocol = Literal["http", "https"]
-SonarrApiKey = Annotated[SecretStr, StringConstraints(min_length=32, max_length=32)]
+LidarrProtocol = Literal["http", "https"]
+LidarrApiKey = Annotated[SecretStr, StringConstraints(min_length=32, max_length=32)]
 
 
 class OSAgnosticPath(str):

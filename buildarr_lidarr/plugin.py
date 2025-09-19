@@ -13,7 +13,7 @@
 
 
 """
-Sonarr plugin interface.
+Lidarr plugin interface.
 """
 
 from __future__ import annotations
@@ -21,19 +21,19 @@ from __future__ import annotations
 from buildarr.plugins import Plugin
 
 from . import __version__
-from .cli import sonarr
-from .config import SonarrConfig
-from .manager import SonarrManager
-from .secrets import SonarrSecrets
+from .cli import lidarr
+from .config import LidarrConfig
+from .manager import LidarrManager
+from .secrets import LidarrSecrets
 
 
-class SonarrPlugin(Plugin):
+class LidarrPlugin(Plugin):
     """
-    Sonarr plugin class that Buildarr reads to process Sonarr instances.
+    Lidarr plugin class that Buildarr reads to process Lidarr instances.
     """
 
-    cli = sonarr
-    config = SonarrConfig
-    manager = SonarrManager
-    secrets = SonarrSecrets
+    cli = lidarr
+    config = LidarrConfig
+    manager = LidarrManager
+    secrets = LidarrSecrets
     version = __version__
