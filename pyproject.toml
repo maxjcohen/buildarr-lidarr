@@ -1,22 +1,17 @@
-# pyproject.toml
-# Python project configuration.
-
 [build-system]
 requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "buildarr-sonarr"
-description = "Sonarr PVR plugin for Buildarr"
+name = "buildarr-lidarr"
+description = "Lidarr plugin for Buildarr"
 readme = "README.md"
 authors = [
     {name = "Callum Dickinson",  email = "callum.dickinson.nz@gmail.com"},
+    {name = "Max Cohen",  email = "buildarr.gliding304@simplelogin.com"},
 ]
 license = {text = "GPL-3.0-or-later"}
-keywords = [
-    "buildarr",
-    "sonarr",
-]
+keywords = ["buildarr", "lidarr"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Framework :: Pydantic",
@@ -35,25 +30,25 @@ classifiers = [
 ]
 requires-python = ">=3.8"
 dependencies = [
-    "buildarr>=0.8.0b0,<0.9.0",
     "json5>=0.9.7",
 ]
 dynamic = ["version"]
 
 [project.urls]
 Homepage = "https://buildarr.github.io"
-Documentation = "https://buildarr.github.io/plugins/sonarr"
-Repository = "https://github.com/buildarr/buildarr-sonarr"
-Issues = "https://github.com/buildarr/buildarr-sonarr/issues"
-Changelog = "https://buildarr.github.io/plugins/sonarr/release-notes"
+Repository = "https://github.com/maxjcohen/buildarr-lidarr"
+Issues = "https://github.com/maxjcohen/buildarr-lidarr/issues"
 
 [project.entry-points."buildarr.plugins"]
-sonarr = "buildarr_sonarr.plugin:SonarrPlugin"
+lidarr = "buildarr_lidarr.plugin:LidarrPlugin"
 
 [tool.setuptools]
-packages = ["buildarr_sonarr"]
+packages = ["buildarr_lidarr"]
 
 [tool.setuptools_scm]
+
+[tool.pdm]
+distribution = true
 
 [tool.pdm.dev-dependencies]
 docs = [
@@ -149,7 +144,7 @@ pretty = true
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "--color=yes --cov=buildarr_sonarr --cov-config=pyproject.toml --cov-report=html:cover --cov-report=term --cov-report=xml:coverage.xml --junit-xml=rspec.xml -r A --showlocals --verbosity=3"
+addopts = "--color=yes --cov=buildarr_lidarr --cov-config=pyproject.toml --cov-report=html:cover --cov-report=term --cov-report=xml:coverage.xml --junit-xml=rspec.xml -r A --showlocals --verbosity=3"
 filterwarnings = [
     "error",
 ]
