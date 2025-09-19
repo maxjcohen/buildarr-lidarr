@@ -29,10 +29,30 @@ classifiers = [
     "Typing :: Typed",
 ]
 requires-python = ">=3.8"
+dynamic = ["version"]
+
 dependencies = [
     "json5>=0.9.7",
 ]
-dynamic = ["version"]
+
+[dependency-groups]
+docs = [
+    "mkdocs==1.6.0",
+    "mkdocstrings[python]==0.24.3",
+]
+lint = [
+    "mypy==1.14.1",
+    "ruff==0.12.3",
+    "types-requests==2.31.0.20240406",
+    "isort>=5.13.2",
+]
+test = [
+    "pexpect>=4.9.0",
+    "pytest>=8.0.2",
+    "pytest-cov>=4.1.0",
+    "pytest-httpserver>=1.0.10",
+    "pytest-mock>=3.12.0",
+]
 
 [project.urls]
 Homepage = "https://buildarr.github.io"
@@ -49,24 +69,6 @@ packages = ["buildarr_lidarr"]
 
 [tool.pdm]
 distribution = true
-
-[tool.pdm.dev-dependencies]
-docs = [
-    "mkdocs==1.6.0",
-    "mkdocstrings[python]==0.24.3",
-]
-lint = [
-    "mypy==1.10.0",
-    "ruff==0.4.2",
-    "types-requests==2.31.0.20240406",
-]
-test = [
-    "pexpect>=4.9.0",
-    "pytest>=8.0.2",
-    "pytest-cov>=4.1.0",
-    "pytest-httpserver>=1.0.10",
-    "pytest-mock>=3.12.0",
-]
 
 [tool.pdm.scripts]
 lint = {cmd = "ruff check"}
