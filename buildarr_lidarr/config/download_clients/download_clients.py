@@ -459,16 +459,6 @@ class DownloadstationUsenetDownloadClient(UsenetDownloadClient):
         ("use_ssl", "useSsl", {"is_field": True}),
         ("username", "username", {"is_field": True}),
         ("password", "password", {"is_field": True}),
-        (
-            "category",
-            "tvCategory",
-            {"is_field": True, "decoder": lambda v: v or None, "encoder": lambda v: v or ""},
-        ),
-        (
-            "category",
-            "tvDirectory",
-            {"is_field": True, "decoder": lambda v: v or None, "encoder": lambda v: v or ""},
-        ),
     ]
 
 
@@ -569,13 +559,6 @@ class NzbgetDownloadClient(UsenetDownloadClient):
         ),
         ("username", "username", {"is_field": True}),
         ("password", "password", {"is_field": True}),
-        (
-            "category",
-            "tvCategory",
-            {"is_field": True, "decoder": lambda v: v or None, "encoder": lambda v: v or ""},
-        ),
-        ("recent_priority", "recentTvPriority", {"is_field": True}),
-        ("older_priority", "olderTvPriority", {"is_field": True}),
         ("add_paused", "addPaused", {"is_field": True}),
     ]
 
@@ -658,13 +641,6 @@ class NzbvortexDownloadClient(UsenetDownloadClient):
             {"is_field": True, "decoder": lambda v: v or None, "encoder": lambda v: v or ""},
         ),
         ("api_key", "apiKey", {"is_field": True}),
-        (
-            "category",
-            "tvCategory",
-            {"is_field": True, "decoder": lambda v: v or None, "encoder": lambda v: v or ""},
-        ),
-        ("recent_priority", "recentTvPriority", {"is_field": True}),
-        ("older_priority", "olderTvPriority", {"is_field": True}),
     ]
 
 
@@ -788,13 +764,6 @@ class SabnzbdDownloadClient(UsenetDownloadClient):
             },
         ),
         ("api_key", "apiKey", {"is_field": True}),
-        (
-            "category",
-            "tvCategory",
-            {"is_field": True, "decoder": lambda v: v or None, "encoder": lambda v: v or ""},
-        ),
-        ("recent_priority", "recentTvPriority", {"is_field": True}),
-        ("older_priority", "olderTvPriority", {"is_field": True}),
     ]
 
 
@@ -909,7 +878,7 @@ class DelugeDownloadClient(TorrentDownloadClient):
     Password to use to authenticate the download client user.
     """
 
-    category: Optional[str] = "tv-lidarr"
+    category: Optional[str] = "lidarr"
     """
     Associate media from Lidarr with a category.
 
@@ -958,18 +927,6 @@ class DelugeDownloadClient(TorrentDownloadClient):
             {"is_field": True, "decoder": lambda v: v or None, "encoder": lambda v: v or ""},
         ),
         ("password", "password", {"is_field": True}),
-        (
-            "category",
-            "tvCategory",
-            {"is_field": True, "decoder": lambda v: v or None, "encoder": lambda v: v or ""},
-        ),
-        (
-            "postimport_category",
-            "tvImportedCategory",
-            {"is_field": True, "decoder": lambda v: v or None, "encoder": lambda v: v or ""},
-        ),
-        ("recent_priority", "recentTvPriority", {"is_field": True}),
-        ("older_priority", "olderTvPriority", {"is_field": True}),
     ]
 
 
@@ -1033,16 +990,6 @@ class DownloadstationTorrentDownloadClient(TorrentDownloadClient):
         ("use_ssl", "useSsl", {"is_field": True}),
         ("username", "username", {"is_field": True}),
         ("password", "password", {"is_field": True}),
-        (
-            "category",
-            "tvCategory",
-            {"is_field": True, "decoder": lambda v: v or None, "encoder": lambda v: v or ""},
-        ),
-        (
-            "category",
-            "tvDirectory",
-            {"is_field": True, "decoder": lambda v: v or None, "encoder": lambda v: v or ""},
-        ),
     ]
 
 
@@ -1135,7 +1082,6 @@ class FloodDownloadClient(TorrentDownloadClient):
         ),
         ("flood_tags", "tags", {"is_field": True, "encoder": sorted}),
         ("postimport_tags", "postImportTags", {"is_field": True, "encoder": sorted}),
-        ("recent_priority", "recentTvPriority", {"is_field": True}),
         (
             "additional_tags",
             "additionalTags",
@@ -1189,7 +1135,7 @@ class HadoukenDownloadClient(TorrentDownloadClient):
     Password to use to authenticate the download client user.
     """
 
-    category: NonEmptyStr = "lidarr-tv"
+    category: NonEmptyStr = "lidarr"
     """
     Associate media from Lidarr with a category.
 
@@ -1255,7 +1201,7 @@ class QbittorrentDownloadClient(TorrentDownloadClient):
     Password to use to authenticate the download client user, if required.
     """
 
-    category: Optional[str] = "tv-lidarr"
+    category: Optional[str] = "lidarr"
     """
     Associate media from Lidarr with a category.
 
@@ -1349,28 +1295,6 @@ class QbittorrentDownloadClient(TorrentDownloadClient):
                 "field_default": None,
             },
         ),
-        (
-            "category",
-            "tvCategory",
-            {
-                "is_field": True,
-                "decoder": lambda v: v or None,
-                "encoder": lambda v: v or "",
-                "field_default": None,
-            },
-        ),
-        (
-            "postimport_category",
-            "tvImportedCategory",
-            {
-                "is_field": True,
-                "decoder": lambda v: v or None,
-                "encoder": lambda v: v or "",
-                "field_default": None,
-            },
-        ),
-        ("recent_priority", "recentTvPriority", {"is_field": True}),
-        ("older_priority", "olderTvPriority", {"is_field": True}),
         ("initial_state", "initialState", {"is_field": True}),
         ("sequential_order", "sequentialOrder", {"is_field": True}),
         ("first_and_last_first", "firstAndLast", {"is_field": True}),
@@ -1419,7 +1343,7 @@ class RtorrentDownloadClient(TorrentDownloadClient):
     Password to use to authenticate the download client user.
     """
 
-    category: Optional[str] = "tv-lidarr"
+    category: Optional[str] = "lidarr"
     """
     Associate media from Lidarr with a category.
 
@@ -1483,23 +1407,6 @@ class RtorrentDownloadClient(TorrentDownloadClient):
         ("url_base", "urlBase", {"is_field": True}),
         ("username", "username", {"is_field": True}),
         ("password", "password", {"is_field": True}),
-        (
-            "category",
-            "tvCategory",
-            {"is_field": True, "decoder": lambda v: v or None, "encoder": lambda v: v or ""},
-        ),
-        (
-            "postimport_category",
-            "tvImportedCategory",
-            {"is_field": True, "decoder": lambda v: v or None, "encoder": lambda v: v or ""},
-        ),
-        (
-            "directory",
-            "tvDirectory",
-            {"is_field": True, "decoder": lambda v: v or None, "encoder": lambda v: v or ""},
-        ),
-        ("recent_priority", "recentTvPriority", {"is_field": True}),
-        ("older_priority", "olderTvPriority", {"is_field": True}),
         ("add_stopped", "addStopped", {"is_field": True}),
     ]
 
@@ -1552,23 +1459,6 @@ class TorrentBlackholeDownloadClient(TorrentDownloadClient):
         ("url_base", "urlBase", {"is_field": True}),
         ("username", "username", {"is_field": True}),
         ("password", "password", {"is_field": True}),
-        (
-            "category",
-            "tvCategory",
-            {"is_field": True, "decoder": lambda v: v or None, "encoder": lambda v: v or ""},
-        ),
-        (
-            "postimport_category",
-            "tvImportedCategory",
-            {"is_field": True, "decoder": lambda v: v or None, "encoder": lambda v: v or ""},
-        ),
-        (
-            "directory",
-            "tvDirectory",
-            {"is_field": True, "decoder": lambda v: v or None, "encoder": lambda v: v or ""},
-        ),
-        ("recent_priority", "recentTvPriority", {"is_field": True}),
-        ("older_priority", "olderTvPriority", {"is_field": True}),
         ("add_stopped", "addStopped", {"is_field": True}),
     ]
 
@@ -1667,18 +1557,6 @@ class TransmissionDownloadClientBase(TorrentDownloadClient):
             {"is_field": True, "decoder": lambda v: v or None, "encoder": lambda v: v or ""},
         ),
         ("password", "password", {"is_field": True, "field_default": None}),
-        (
-            "category",
-            "tvCategory",
-            {"is_field": True, "decoder": lambda v: v or None, "encoder": lambda v: v or ""},
-        ),
-        (
-            "directory",
-            "tvDirectory",
-            {"is_field": True, "decoder": lambda v: v or None, "encoder": lambda v: v or ""},
-        ),
-        ("recent_priority", "recentTvPriority", {"is_field": True}),
-        ("older_priority", "olderTvPriority", {"is_field": True}),
         ("add_paused", "addPaused", {"is_field": True}),
     ]
 
@@ -1768,7 +1646,7 @@ class UtorrentDownloadClient(TorrentDownloadClient):
     Password to use to authenticate the download client user.
     """
 
-    category: Optional[str] = "tv-lidarr"
+    category: Optional[str] = "lidarr"
     """
     Associate media from Lidarr with a category.
 
@@ -1823,18 +1701,6 @@ class UtorrentDownloadClient(TorrentDownloadClient):
         ),
         ("username", "username", {"is_field": True}),
         ("password", "password", {"is_field": True}),
-        (
-            "category",
-            "tvCategory",
-            {"is_field": True, "decoder": lambda v: v or None, "encoder": lambda v: v or ""},
-        ),
-        (
-            "postimport_category",
-            "tvImportedCategory",
-            {"is_field": True, "decoder": lambda v: v or None, "encoder": lambda v: v or ""},
-        ),
-        ("recent_priority", "recentTvPriority", {"is_field": True}),
-        ("older_priority", "olderTvPriority", {"is_field": True}),
         ("initial_state", "initialState", {"is_field": True}),
     ]
 
