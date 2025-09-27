@@ -43,6 +43,18 @@ class PropersAndRepacks(BaseEnum):
     do_not_prefer = "doNotPrefer"
 
 
+class ColonReplacementFormat(BaseEnum):
+    """
+    Colon Replacement options.
+    """
+
+    delete = 0
+    replace_with_dash = 1
+    replace_with_space_dash = 2
+    replace_with_space_dash_space = 3
+    smart_replace = 4
+
+
 class RescanArtistFolderAfterRefresh(BaseEnum):
     """
     Enumeration for rescan artist folder after refresh.
@@ -112,6 +124,29 @@ class LidarrMediaManagementSettingsConfig(LidarrConfigBase):
 
     Lidarr will use the existing file name if renaming is disabled.
     """
+
+    replace_illegal_characters: bool = True
+
+    colon_replacement_format: ColonReplacementFormat = ColonReplacementFormat.smart_replace
+
+    standard_track_format: str = (
+        "{Album Title} ({Release Year})/{Artist Name} - {Album Title} - {track:00} - {Track Title}"
+    )
+
+    multi_disk_track_format: str = (
+        "{Album Title} ({Release Year})/"
+        "{Medium Format} {medium:00}/{Artist Name} - {Album Title} - {track:00} - {Track Title}"
+    )
+
+    artist_folder_format: str = "{Artist Name}"
+
+    include_artist_name: bool = False
+
+    include_album_title: bool = False
+
+    include_quality: bool = False
+
+    replace_spaces: bool = False
 
     replace_illegal_characters: bool = True
     """
@@ -308,6 +343,15 @@ class LidarrMediaManagementSettingsConfig(LidarrConfigBase):
     _naming_remote_map: ClassVar[List[RemoteMapEntry]] = [
         # Episode Naming
         ("rename_tracks", "renameTracks", {}),
+        ("replace_illegal_characters", "replaceIllegalCharacters", {}),
+        ("colon_replacement_format", "colonReplacementFormat", {}),
+        ("standard_track_format", "standardTrackFormat", {}),
+        ("multi_disk_track_format", "multiDiscTrackFormat", {}),
+        ("artist_folder_format", "artistFolderFormat", {}),
+        ("include_artist_name", "includeArtistName", {}),
+        ("include_album_title", "includeAlbumTitle", {}),
+        ("include_quality", "includeQuality", {}),
+        ("replace_spaces", "replaceSpaces", {}),
     ]
     _mediamanagement_remote_map: ClassVar[List[RemoteMapEntry]] = [
         # Folders
