@@ -48,17 +48,13 @@ logger = getLogger(__name__)
 
 class NabCategory(BaseEnum):
     # https://github.com/Prowlarr/Prowlarr/blob/develop/src/NzbDrone.Core/Indexers/NewznabStandardCategory.cs
-    TV = (5000, "TV")
-    TV_WEBDL = (5010, "TV/WEB-DL")
-    TV_FOREIGN = (5020, "TV/Foreign")
-    TV_SD = (5030, "TV/SD")
-    TV_HD = (5040, "TV/HD")
-    TV_UHD = (5045, "TV/UHD")
-    TV_OTHER = (5050, "TV/Other")
-    TV_SPORT = (5060, "TV/Sport", "TV/Sports")
-    TV_DOCUMENTARY = (5080, "TV/Documentary")
-    TV_X265 = (5090, "TV/x265")
     AUDIO = (3000, "Audio")
+    AUDIO_MP3 = (3010, "Audio/MP3")
+    AUDIO_VIDEO = (3020, "Audio/Video")
+    AUDIO_AUDIOBOOK = (3030, "Audio/Audiobook")
+    AUDIO_LOSSLESS = (3040, "Audio/Lossless")
+    AUDIO_OTHER = (3050, "Audio/Other")
+    AUDIO_FOREIGN = (3060, "Audio/Foreign")
 
     @classmethod
     def decode(cls, value: int) -> Union[Self, int]:
@@ -358,27 +354,10 @@ class NewznabIndexer(UsenetIndexer):
     API key for use with the Newznab API.
     """
 
-    categories: Set[Union[NabCategory, int]] = {NabCategory.TV_SD, NabCategory.TV_HD}
+    categories: Set[Union[NabCategory, int]] = {NabCategory.AUDIO}
     """
     Categories to monitor for standard/daily shows.
     Define as empty to disable.
-
-    Values:
-
-    * `TV`
-    * `TV/WEB-DL`
-    * `TV/Foreign`
-    * `TV/SD`
-    * `TV/HD`
-    * `TV/UHD`
-    * `TV/Other`
-    * `TV/Sport`
-    * `TV/Documentary`
-    * `TV/x265`
-
-    *Changed in version 0.6.1*: The Lidarr-native values for Newznab/Torznab categories
-    (e.g. `TV/WEB-DL`) can now be specified, instead of the Buildarr-native values
-    (e.g. `TV-WEBDL`). The old values can still be used.
     """
 
     additional_parameters: Optional[str] = None
@@ -404,6 +383,7 @@ class NewznabIndexer(UsenetIndexer):
             {"is_field": True, "field_default": None, "decoder": lambda v: v or None},
         ),
     ]
+
 
 class OmgwtfnzbsIndexer(UsenetIndexer):
     """
@@ -790,7 +770,7 @@ class TorznabIndexer(TorrentIndexer):
     API key for use with the Torznab API.
     """
 
-    categories: Set[NabCategory] = {NabCategory.TV_SD, NabCategory.TV_HD}
+    categories: Set[NabCategory] = {NabCategory.AUDIO}
     """
     Categories to monitor for standard/daily shows.
     Define as empty to disable.
@@ -836,6 +816,7 @@ class TorznabIndexer(TorrentIndexer):
             {"is_field": True, "field_default": None, "decoder": lambda v: v or None},
         ),
     ]
+
 
 INDEXER_TYPES: Tuple[Type[Indexer], ...] = (
     FanzubIndexer,
